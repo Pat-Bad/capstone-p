@@ -15,7 +15,8 @@ const YouTubePlaylistCreator = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Query di ricerca
   const [videos, setVideos] = useState([]); // Lista dei video trovati
   const [selectedVideos, setSelectedVideos] = useState([]); // Video selezionati per la playlist
-  const [playlistName, setPlaylistName] = useState(""); // Nome della nuova playlist
+  const [playlistName, setPlaylistName] = useState(""); // Nome della playlist
+  const [loadedPlaylists, setLoadedPlaylists] = useState([]); // Playlist caricate
 
   // Funzione per cercare i video
   const handleSearch = async () => {
@@ -30,44 +31,67 @@ const YouTubePlaylistCreator = () => {
     setSelectedVideos((prev) => [...prev, video]);
   };
 
+  //funzione per caricare le playlist già salvate
+  const loadPlaylists = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:8080/api/playlist", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json(); // Ottieni la risposta come testo prima di fare il parsing
+      console.log(data); // Log della risposta
+
+      if (response.ok) {
+        setLoadedPlaylists(data);
+      } else {
+        console.error("Errore nel caricamento delle playlist:", data);
+      }
+    } catch (error) {
+      console.error("Errore nel caricamento delle playlist:", error);
+    }
+  };
+
   // Funzione per creare la playlist e aggiungere i video
   const handleCreatePlaylist = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Token mancante, effettua il login.");
-      return;
-    }
 
-    // Crea il payload con il nome della playlist e gli URL dei video selezionati
     const requestData = {
       nomePlaylist: playlistName,
       youtubeUrls: selectedVideos.map(
         (video) => `https://www.youtube.com/watch?v=${video.id.videoId}`
-      ), // Gli URL dei video
+      ),
     };
 
-    const response = await fetch("http://localhost:8080/api/playlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestData),
-    });
+    try {
+      const response = await fetch("http://localhost:8080/api/playlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestData),
+      });
 
-    if (response.ok) {
-      alert("Playlist creata con successo!");
-    } else {
-      const errorText = await response.text();
-      alert(`Errore nella creazione della playlist: ${errorText}`);
+      if (response.ok) {
+        console.log("Playlist creata con successo!");
+      } else {
+        const errorData = await response.json();
+        console.error("Errore nella creazione della playlist:", errorData);
+      }
+    } catch (error) {
+      console.error("Errore ", error);
+      alert(`Errore ${error.message}`);
     }
   };
 
   return (
     <div>
-      {/* Sezione per creare la playlist */}
       <div>
-        <h3>Create a new playlist</h3>
+        <h3 className="mb-2">Create a new playlist</h3>
         <input
           type="text"
           placeholder="Enter playlist name"
@@ -76,7 +100,6 @@ const YouTubePlaylistCreator = () => {
         />
       </div>
 
-      {/* Barra di ricerca */}
       <div>
         <input
           type="text"
@@ -86,8 +109,6 @@ const YouTubePlaylistCreator = () => {
         />
         <Button onClick={handleSearch}>Search</Button>
       </div>
-
-      {/* Risultati della ricerca */}
       <div>
         {videos.map((video) => (
           <div key={video.id.videoId}>
@@ -98,8 +119,6 @@ const YouTubePlaylistCreator = () => {
           </div>
         ))}
       </div>
-
-      {/* Video selezionati */}
       <div>
         <h3>Selected music</h3>
         <ul>
@@ -109,12 +128,15 @@ const YouTubePlaylistCreator = () => {
         </ul>
       </div>
 
-      {/* Crea la playlist e aggiungi i video */}
       <div>
-        <Button onClick={handleCreatePlaylist}>
-          Create Playlist and Add Videos
-        </Button>
+        <Button onClick={handleCreatePlaylist}>Create Playlist</Button>
       </div>
+      <Button onClick={loadPlaylists}>Load Playlists</Button>
+      {loadedPlaylists.map((playlist) => (
+        <div key={playlist.id}>
+          <h3>{playlist.nomePlaylist}</h3>
+        </div>
+      ))}
     </div>
   );
 };

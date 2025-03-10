@@ -58,7 +58,7 @@ const AudioRecorder = ({ playlistId, userId }) => {
         }
       );
       const data = await response.json();
-      console.log("File salvato su Cloudinary:", data);
+      console.log("File salvato su Cloudinary:", data.secure_url);
       const audioUrl = data.secure_url;
       await saveAudioUrlToDatabase(audioUrl);
     } catch (error) {
@@ -72,6 +72,7 @@ const AudioRecorder = ({ playlistId, userId }) => {
       playlistId: playlistId,
       userId: userId,
     };
+
     const token = localStorage.getItem("token");
 
     try {
@@ -85,9 +86,12 @@ const AudioRecorder = ({ playlistId, userId }) => {
       });
 
       if (response.ok) {
-        console.log("Audio URL salvato nel DB!");
+        console.log("Memo vocale salvato nel DB.");
       } else {
-        console.error("Errore", response.status);
+        // Gestire l'errore in caso di risposta non valida
+        const errorText = await response.text();
+        console.log(audioData);
+        console.error("Errore nel salvataggio nel DB:", errorText);
       }
     } catch (error) {
       console.error("Errore nel salvataggio nel DB:", error);
