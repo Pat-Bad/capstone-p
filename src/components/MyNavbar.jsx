@@ -6,7 +6,7 @@ const MyNavbar = () => {
     <Navbar
       collapseOnSelect
       expand="lg"
-      className="bg-body-tertiary border-1 border-bottom border-dark fixed-top"
+      className="bg-body-tertiary border-1 border-bottom border-dark fixed-top z-100000"
     >
       <Container fluid>
         <Navbar.Brand href="#home">Capstone</Navbar.Brand>
@@ -21,7 +21,7 @@ const MyNavbar = () => {
             </Nav.Link>
             <Nav.Link
               as={NavLink}
-              to="/audiorecorder"
+              to="/diary"
             >
               Diary
             </Nav.Link>
@@ -30,6 +30,12 @@ const MyNavbar = () => {
               to="/"
             >
               Login
+            </Nav.Link>
+            <Nav.Link
+              as={NavLink}
+              to="/profile"
+            >
+              Profile
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

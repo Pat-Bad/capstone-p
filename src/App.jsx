@@ -5,6 +5,8 @@ import AudioRecorder from "./components/AudioRecorder";
 import YouTubePlaylistCreator from "./components/YoutubePlaylistCreator";
 import AudioGetter from "./components/AudioGetter";
 import MyNavbar from "./components/MyNavbar";
+import ProfilePage from "./pages/ProfilePage";
+import DiaryPage from "./pages/DiaryPage";
 
 function App() {
   return (
@@ -26,8 +28,12 @@ function App() {
           />
 
           <Route
-            path="/playlist/:playlistId"
-            element={<AudioGetter />}
+            path="/diary"
+            element={<DiaryPage />}
+          />
+          <Route
+            path="/profile"
+            element={<ProfilePage />}
           />
         </Routes>
       </div>

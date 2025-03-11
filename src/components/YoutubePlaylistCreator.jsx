@@ -190,7 +190,8 @@ const YouTubePlaylistCreator = () => {
     setPlaylistId(id);
   };
 
-  const fetchAudio = async () => {
+  {
+    /*const fetchAudio = async () => {
     const token = localStorage.getItem("token");
 
     try {
@@ -216,8 +217,8 @@ const YouTubePlaylistCreator = () => {
       }
     } catch (error) {
       console.error("Errore nel recupero del memo vocale:", error);
-    }
-  };
+  }*/
+  }
 
   return (
     <Container>
@@ -296,8 +297,13 @@ const YouTubePlaylistCreator = () => {
           </ul>
         </Col>
       </Row>
-      <Row className="m-3">
-        <Button onClick={handleCreatePlaylist}>Save Playlist</Button>
+      <Row className="mt-5">
+        <Button
+          className="w-25"
+          onClick={handleCreatePlaylist}
+        >
+          Save Playlist
+        </Button>
       </Row>
 
       <Row className="mt-5 ms-auto me-auto justify-content-evenly">
@@ -320,7 +326,7 @@ const YouTubePlaylistCreator = () => {
         )}
       </Row>
 
-      <Row className="mt-5">
+      {/*<Row className="mt-5">
         <Button
           className="mt-3 w-25"
           onClick={fetchAudio}
@@ -332,7 +338,7 @@ const YouTubePlaylistCreator = () => {
           controls
           src={audioUrl}
         />
-      </Row>
+      </Row>*/}
     </Container>
   );
 };
