@@ -58,9 +58,9 @@ const LoginAndRegistrationForms = () => {
   };
 
   return (
-    <Container>
-      <Row className="justify-content-md-between">
-        <Col className="col-5">
+    <Container className="mt-5">
+      <Row className="w-100 mb-5">
+        <Col className="col-6">
           <h5>Register</h5>
           <Form onSubmit={handleRegisterSubmit}>
             <div className="mb-3">
@@ -101,7 +101,9 @@ const LoginAndRegistrationForms = () => {
             </Button>
           </Form>
         </Col>
-        <Col className="col-5">
+      </Row>
+      <Row className="w-100 d-flex justify-content-end">
+        <Col className="col-6">
           <h5>Login</h5>
           <Form onSubmit={handleLoginSubmit}>
             <div className="mb-3">

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 
 // Funzione per cercare i video su YouTube
 const searchYouTube = async (query) => {
@@ -58,9 +58,31 @@ const YouTubePlaylistCreator = () => {
       }
     };
   }, [isRecording]);
+  const loadPlaylists = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:8080/api/playlist", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoadedPlaylists(data);
+      } else {
+        console.error("Errore nel caricamento delle playlist:", data);
+      }
+    } catch (error) {
+      console.error("Errore nel caricamento delle playlist:", error);
+    }
+  };
 
   const saveAudioUrlToDatabase = async (audioUrl) => {
     const userId = localStorage.getItem("userId");
+    const playlistId = await handleCreatePlaylist();
     const audioData = {
       url: audioUrl,
       playlistId: playlistId,
@@ -127,31 +149,11 @@ const YouTubePlaylistCreator = () => {
     setSelectedVideos((prev) => [...prev, video]);
   };
 
-  // Funzione per caricare le playlist già salvate
-  const loadPlaylists = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:8080/api/playlist", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setLoadedPlaylists(data);
-      } else {
-        console.error("Errore nel caricamento delle playlist:", data);
-      }
-    } catch (error) {
-      console.error("Errore nel caricamento delle playlist:", error);
-    }
-  };
-
   // Funzione per creare la playlist e aggiungere i video
   const handleCreatePlaylist = async () => {
+    if (playlistId) {
+      return playlistId;
+    }
     const token = localStorage.getItem("token");
 
     const requestData = {
@@ -172,7 +174,9 @@ const YouTubePlaylistCreator = () => {
       });
 
       if (response.ok) {
-        console.log("Playlist creata con successo!");
+        const playlistData = await response.json();
+        setPlaylistId(playlistData.id);
+        return playlistData.id;
       } else {
         const errorData = await response.json();
         console.error("Errore nella creazione della playlist:", errorData);
@@ -186,7 +190,8 @@ const YouTubePlaylistCreator = () => {
     setPlaylistId(id);
   };
 
-  const fetchAudio = async () => {
+  {
+    /*const fetchAudio = async () => {
     const token = localStorage.getItem("token");
 
     try {
@@ -213,83 +218,99 @@ const YouTubePlaylistCreator = () => {
     } catch (error) {
       console.error("Errore nel recupero del memo vocale:", error);
     }
-  };
+  };*/
+  }
 
   return (
     <Container>
-      <Row className="m-3">
+      <Row>
+        <Button
+          className="mt-3 mb-5 w-25"
+          onClick={loadPlaylists}
+        >
+          Load Playlists
+        </Button>
+
+        {loadedPlaylists.map((playlist) => (
+          <div key={playlist.id}>
+            <div className="d-flex align-items-center mt-3">
+              <h5 className="m-0">{playlist.nomePlaylist}</h5>
+              <Button
+                className="ms-4 w-25"
+                key={playlist.id}
+                value={playlist.nomePlaylist}
+                onClick={() => handleSelectPlaylist(playlist.id)}
+              >
+                Select Playlist
+              </Button>
+            </div>
+          </div>
+        ))}
+      </Row>
+      <Row className="mt-3">
         <h3 className="mb-2">Create a new playlist</h3>
         <input
+          className="w-50"
           type="text"
-          placeholder="Enter playlist name"
+          placeholder="What should we call it?"
           value={playlistName}
           onChange={(e) => setPlaylistName(e.target.value)}
         />
       </Row>
 
-      <Row className="m-3">
-        <input
-          type="text"
-          placeholder="Search for music..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Button
-          className="m-2"
-          onClick={handleSearch}
-        >
-          Search
-        </Button>
+      <Row className="mt-5">
+        <Col>
+          <input
+            className="w-50"
+            type="text"
+            placeholder="Search for music..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button
+            className="ms-3 w-25"
+            onClick={handleSearch}
+          >
+            Search
+          </Button>
 
-        <div>
-          {videos.map((video) => (
-            <div key={video.id.videoId}>
-              <h3>{video.snippet.title}</h3>
-              <Button onClick={() => handleAddToPlaylist(video)}>
-                Add to playlist
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Row>
-
-      <Row className="m-3">
-        <h3>Selected music</h3>
-        <ul>
-          {selectedVideos.map((video) => (
-            <li key={video.id.videoId}>{video.snippet.title}</li>
-          ))}
-        </ul>
-      </Row>
-
-      <Row className="m-3">
-        <Button onClick={handleCreatePlaylist}>Create Playlist</Button>
-      </Row>
-      <Row className="m-3">
-        <Button onClick={loadPlaylists}>Load Playlists</Button>
-        {loadedPlaylists.map((playlist) => (
-          <div key={playlist.id}>
-            <h3>{playlist.nomePlaylist}</h3>
+          <div className="mt-5 ">
+            {videos.map((video) => (
+              <div key={video.id.videoId}>
+                <h5>{video.snippet.title}</h5>
+                <Button
+                  className="mb-3"
+                  onClick={() => handleAddToPlaylist(video)}
+                >
+                  Add to playlist
+                </Button>
+              </div>
+            ))}
           </div>
-        ))}
-        <div>
-          <h3>Select a Playlist</h3>
-          {loadedPlaylists.map((playlist) => (
-            <div key={playlist.id}>
-              <h3>{playlist.nomePlaylist}</h3>
-              <Button onClick={() => handleSelectPlaylist(playlist.id)}>
-                Select Playlist
-              </Button>
-            </div>
-          ))}
-        </div>
+        </Col>
+
+        <Col>
+          <h3>Selected music</h3>
+          <ul>
+            {selectedVideos.map((video) => (
+              <li key={video.id.videoId}>{video.snippet.title}</li>
+            ))}
+          </ul>
+        </Col>
       </Row>
-      <Row className="mt-5 w-50 ms-auto me-auto">
-        <button onClick={() => setIsRecording(!isRecording)}>
+      <Row className="m-3">
+        <Button onClick={handleCreatePlaylist}>Save Playlist</Button>
+      </Row>
+
+      <Row className="mt-5 ms-auto me-auto justify-content-evenly">
+        <button
+          className="w-25"
+          onClick={() => setIsRecording(!isRecording)}
+        >
           {isRecording ? "Stop Recording" : "Start Recording"}
         </button>
         {audioUrl && (
-          <div>
+          <div className="w-50 ms-3">
             <audio controls>
               <source
                 src={audioUrl}
@@ -299,8 +320,10 @@ const YouTubePlaylistCreator = () => {
             </audio>
           </div>
         )}
+      </Row>
 
-        {/* Bottone per avviare la richiesta dell'audio */}
+      <Row>
+        {/* Bottone per avviare la richiesta dell'audio 
         <Button
           className="mt-3"
           onClick={fetchAudio}
@@ -311,6 +334,7 @@ const YouTubePlaylistCreator = () => {
           controls
           src={audioUrl}
         />
+        */}
       </Row>
     </Container>
   );

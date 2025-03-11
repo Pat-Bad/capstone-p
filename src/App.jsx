@@ -8,9 +8,9 @@ import MyNavbar from "./components/MyNavbar";
 
 function App() {
   return (
-    <>
-      <MyNavbar />
-      <BrowserRouter>
+    <BrowserRouter>
+      <div>
+        <MyNavbar />
         <Routes>
           <Route
             path="/playlist"
@@ -30,8 +30,8 @@ function App() {
             element={<AudioGetter />}
           />
         </Routes>
-      </BrowserRouter>
-    </>
+      </div>
+    </BrowserRouter>
   );
 }
 
