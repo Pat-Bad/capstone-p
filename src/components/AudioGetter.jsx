@@ -14,6 +14,12 @@ const AudioGetter = ({ playlistId }) => {
         return;
       }
 
+      if (!playlistId) {
+        setError("ID playlist non valido.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(
           `https://api.cloudinary.com/v1_1/duwwcpahb/resources/search?q=playlistId:${playlistId}`,
@@ -24,10 +30,11 @@ const AudioGetter = ({ playlistId }) => {
             },
           }
         );
+        const data = await response.json();
+        console.log(data);
 
         if (response.ok) {
-          const data = await response.json();
-          setAudioUrl(data.url);
+          setAudioUrl(data.url); // Assicurati che 'data.url' sia corretto
           console.log(data);
         } else {
           setError("Nessun memo vocale trovato.");

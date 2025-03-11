@@ -4,10 +4,12 @@ import LoginAndRegistrationForms from "./components/LoginAndRegistrationForms";
 import AudioRecorder from "./components/AudioRecorder";
 import YouTubePlaylistCreator from "./components/YoutubePlaylistCreator";
 import AudioGetter from "./components/AudioGetter";
+import MyNavbar from "./components/MyNavbar";
 
 function App() {
   return (
     <>
+      <MyNavbar />
       <BrowserRouter>
         <Routes>
           <Route
@@ -22,8 +24,9 @@ function App() {
             path="/audiorecorder"
             element={<AudioRecorder />}
           />
+
           <Route
-            path="/audiogetter"
+            path="/playlist/:playlistId"
             element={<AudioGetter />}
           />
         </Routes>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Container, Row } from "react-bootstrap";
 
 // Funzione per cercare i video su YouTube
 const searchYouTube = async (query) => {
@@ -17,6 +17,102 @@ const YouTubePlaylistCreator = () => {
   const [selectedVideos, setSelectedVideos] = useState([]); // Video selezionati per la playlist
   const [playlistName, setPlaylistName] = useState(""); // Nome della playlist
   const [loadedPlaylists, setLoadedPlaylists] = useState([]); // Playlist caricate
+  const [isRecording, setIsRecording] = useState(false); // Stato di registrazione
+  const [audioUrl, setAudioUrl] = useState(null); // URL dell'audio
+  const [playlistId, setPlaylistId] = useState(null); // ID della playlist
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  useEffect(() => {
+    if (isRecording) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          mediaRecorderRef.current = new MediaRecorder(stream);
+          mediaRecorderRef.current.ondataavailable = (event) => {
+            audioChunksRef.current.push(event.data);
+          };
+          mediaRecorderRef.current.onstop = async () => {
+            const audioBlob = new Blob(audioChunksRef.current, {
+              type: "audio/mpeg", // Cambiato in MP3 per compatibilità Cloudinary
+            });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            setAudioUrl(audioUrl);
+            audioChunksRef.current = [];
+            await uploadToCloudinary(audioBlob);
+          };
+          mediaRecorderRef.current.start();
+        })
+        .catch((err) => {
+          console.error("Errore nell'accesso al microfono:", err);
+        });
+    } else if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+    }
+
+    return () => {
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stream
+          .getTracks()
+          .forEach((track) => track.stop());
+      }
+    };
+  }, [isRecording]);
+
+  const saveAudioUrlToDatabase = async (audioUrl) => {
+    const userId = localStorage.getItem("userId");
+    const audioData = {
+      url: audioUrl,
+      playlistId: playlistId,
+      userId: userId,
+    };
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/api/vocalmemo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(audioData),
+      });
+      console.log(audioData);
+
+      if (response.ok) {
+        console.log("Memo vocale salvato nel DB.");
+      } else {
+        const errorText = await response.text();
+        console.error("Errore nel salvataggio nel DB:", errorText);
+      }
+    } catch (error) {
+      console.error("Errore nel salvataggio nel DB:", error);
+    }
+  };
+
+  const uploadToCloudinary = async (audioBlob) => {
+    const formData = new FormData();
+    formData.append("file", audioBlob);
+    formData.append("upload_preset", "ml_default"); // Il tuo upload preset
+    formData.append("resource_type", "raw"); // Per dire a Cloudinary che è un file audio
+
+    try {
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/duwwcpahb/upload",
+        {
+          method: "POST",
+          body: formData,
+          mode: "cors",
+        }
+      );
+      const data = await response.json();
+      const audioUrl = data.secure_url;
+      await saveAudioUrlToDatabase(audioUrl);
+    } catch (error) {
+      console.error("Errore durante il caricamento su Cloudinary:", error);
+    }
+  };
 
   // Funzione per cercare i video
   const handleSearch = async () => {
@@ -31,7 +127,7 @@ const YouTubePlaylistCreator = () => {
     setSelectedVideos((prev) => [...prev, video]);
   };
 
-  //funzione per caricare le playlist già salvate
+  // Funzione per caricare le playlist già salvate
   const loadPlaylists = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -42,8 +138,7 @@ const YouTubePlaylistCreator = () => {
         },
       });
 
-      const data = await response.json(); // Ottieni la risposta come testo prima di fare il parsing
-      console.log(data); // Log della risposta
+      const data = await response.json();
 
       if (response.ok) {
         setLoadedPlaylists(data);
@@ -84,13 +179,45 @@ const YouTubePlaylistCreator = () => {
       }
     } catch (error) {
       console.error("Errore ", error);
-      alert(`Errore ${error.message}`);
+    }
+  };
+
+  const handleSelectPlaylist = (id) => {
+    setPlaylistId(id);
+  };
+
+  const fetchAudio = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/vocalmemo/${playlistId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const vocalMemo = await response.json();
+
+      if (response.ok) {
+        console.log("Memo vocale trovato:", vocalMemo);
+
+        // Imposta l'URL Cloudinary già memorizzato nel database
+        setAudioUrl(vocalMemo.url);
+
+        // L'elemento audio verrà aggiornato automaticamente con il nuovo URL
+      }
+    } catch (error) {
+      console.error("Errore nel recupero del memo vocale:", error);
     }
   };
 
   return (
-    <div>
-      <div>
+    <Container>
+      <Row className="m-3">
         <h3 className="mb-2">Create a new playlist</h3>
         <input
           type="text"
@@ -98,46 +225,94 @@ const YouTubePlaylistCreator = () => {
           value={playlistName}
           onChange={(e) => setPlaylistName(e.target.value)}
         />
-      </div>
+      </Row>
 
-      <div>
+      <Row className="m-3">
         <input
           type="text"
           placeholder="Search for music..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button onClick={handleSearch}>Search</Button>
-      </div>
-      <div>
-        {videos.map((video) => (
-          <div key={video.id.videoId}>
-            <h3>{video.snippet.title}</h3>
-            <Button onClick={() => handleAddToPlaylist(video)}>
-              Add to playlist
-            </Button>
-          </div>
-        ))}
-      </div>
-      <div>
+        <Button
+          className="m-2"
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+
+        <div>
+          {videos.map((video) => (
+            <div key={video.id.videoId}>
+              <h3>{video.snippet.title}</h3>
+              <Button onClick={() => handleAddToPlaylist(video)}>
+                Add to playlist
+              </Button>
+            </div>
+          ))}
+        </div>
+      </Row>
+
+      <Row className="m-3">
         <h3>Selected music</h3>
         <ul>
           {selectedVideos.map((video) => (
             <li key={video.id.videoId}>{video.snippet.title}</li>
           ))}
         </ul>
-      </div>
+      </Row>
 
-      <div>
+      <Row className="m-3">
         <Button onClick={handleCreatePlaylist}>Create Playlist</Button>
-      </div>
-      <Button onClick={loadPlaylists}>Load Playlists</Button>
-      {loadedPlaylists.map((playlist) => (
-        <div key={playlist.id}>
-          <h3>{playlist.nomePlaylist}</h3>
+      </Row>
+      <Row className="m-3">
+        <Button onClick={loadPlaylists}>Load Playlists</Button>
+        {loadedPlaylists.map((playlist) => (
+          <div key={playlist.id}>
+            <h3>{playlist.nomePlaylist}</h3>
+          </div>
+        ))}
+        <div>
+          <h3>Select a Playlist</h3>
+          {loadedPlaylists.map((playlist) => (
+            <div key={playlist.id}>
+              <h3>{playlist.nomePlaylist}</h3>
+              <Button onClick={() => handleSelectPlaylist(playlist.id)}>
+                Select Playlist
+              </Button>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </Row>
+      <Row className="mt-5 w-50 ms-auto me-auto">
+        <button onClick={() => setIsRecording(!isRecording)}>
+          {isRecording ? "Stop Recording" : "Start Recording"}
+        </button>
+        {audioUrl && (
+          <div>
+            <audio controls>
+              <source
+                src={audioUrl}
+                type="audio/mpeg"
+              />
+              Il tuo browser non supporta l'elemento audio.
+            </audio>
+          </div>
+        )}
+
+        {/* Bottone per avviare la richiesta dell'audio */}
+        <Button
+          className="mt-3"
+          onClick={fetchAudio}
+        >
+          Fetch Audio
+        </Button>
+        <audio
+          controls
+          src={audioUrl}
+        />
+      </Row>
+    </Container>
   );
 };
 

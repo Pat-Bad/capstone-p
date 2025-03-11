@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const AudioRecorder = ({ playlistId, userId }) => {
+const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
+  const [loadedPlaylists, setLoadedPlaylists] = useState([]);
+  const [playlistId, setPlaylistId] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
@@ -67,6 +69,8 @@ const AudioRecorder = ({ playlistId, userId }) => {
   };
 
   const saveAudioUrlToDatabase = async (audioUrl) => {
+    const userId = localStorage.getItem("userId");
+    console.log(userId);
     const audioData = {
       url: audioUrl,
       playlistId: playlistId,
@@ -84,6 +88,7 @@ const AudioRecorder = ({ playlistId, userId }) => {
         },
         body: JSON.stringify(audioData),
       });
+      console.log(audioData);
 
       if (response.ok) {
         console.log("Memo vocale salvato nel DB.");
@@ -96,6 +101,28 @@ const AudioRecorder = ({ playlistId, userId }) => {
     } catch (error) {
       console.error("Errore nel salvataggio nel DB:", error);
     }
+  };
+  const loadPlaylists = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:8080/api/playlist", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      console.log("Playlist caricate:", data);
+      setLoadedPlaylists(data); // Memorizzi le playlist nel tuo stato
+    } catch (error) {
+      console.error("Errore nel caricamento delle playlist:", error);
+    }
+  };
+
+  // Per selezionare la playlist
+  const handleSelectPlaylist = (id) => {
+    setPlaylistId(id); // Imposti il playlistId selezionato
   };
 
   return (
@@ -114,6 +141,14 @@ const AudioRecorder = ({ playlistId, userId }) => {
           </audio>
         </div>
       )}
+      {loadedPlaylists.map((playlist) => (
+        <div key={playlist.id}>
+          <h3>{playlist.nomePlaylist}</h3>
+          <Button onClick={() => handleSelectPlaylist(playlist.id)}>
+            Seleziona questa playlist
+          </Button>
+        </div>
+      ))}
     </div>
   );
 };
