@@ -43,6 +43,7 @@ const DiaryGetter = () => {
                 />
                 Your browser does not support the audio element.
               </audio>
+              <p>{audio.dataRegistrazione}</p>
             </div>
           ))}
         </Col>
