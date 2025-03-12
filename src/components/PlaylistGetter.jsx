@@ -4,7 +4,8 @@ import { BsFillPlayFill, BsPauseFill } from "react-icons/bs"; // Import icons fr
 
 const PlaylistGetter = () => {
   const [playlists, setPlaylists] = useState([]);
-  const [currentVideoIndices, setCurrentVideoIndices] = useState({});
+  const [currentVideoIndices, setCurrentVideoIndices] = useState();
+  const [vocalMemos, setVocalMemos] = useState([]);
   const [playStates, setPlayStates] = useState({}); // Track play/pause state for each video
   const iframeRefs = useRef({}); // Store refs to access iframe elements
   const token = localStorage.getItem("token");
@@ -41,6 +42,39 @@ const PlaylistGetter = () => {
   useEffect(() => {
     getPlaylists();
   }, []);
+
+  //get memos associated with playlists
+  const getVocalMemos = async (playlistId) => {
+    try {
+      const response = fetch(
+        `http://localhost:8080/api/vocalmemo/${playlistId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = (await response).json();
+      if (response.ok) {
+        const memos = {};
+        data.forEach((memo) => {
+          memos[memo.playlistId] = memo; // Map memos by playlistId
+        });
+        setVocalMemos(memos);
+      } else {
+        console.log("Errore nel caricamento dei vocali"), data;
+      }
+    } catch (error) {
+      console.error("Errore nel caricamento dei vocali", error);
+    }
+  };
+  useEffect(() => {
+    // Iterate over playlists and fetch the associated vocal memo for each one
+    playlists.forEach((playlist) => {
+      getVocalMemos(playlist.id);
+    });
+  }, [playlists]); // Dependencies: update whenever playlists change
 
   // Play video function
   const playVideo = (playlistId) => {
@@ -132,11 +166,25 @@ const PlaylistGetter = () => {
               window.location.origin
             : "";
           const isPlaying = playStates[playlist.id] || false;
+          const vocalMemo = vocalMemos[playlist.id];
 
           return (
             <Col key={playlist.id}>
               <div>
                 <h5 className="mt-5">{playlist.nomePlaylist}</h5>
+                {vocalMemo && vocalMemo.audioUrl ? (
+                  <div style={{ marginBottom: "10px" }}>
+                    <audio controls>
+                      <source
+                        src={vocalMemo.audioUrl}
+                        type="audio/mpeg"
+                      />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                ) : (
+                  <p>Nessun memo vocale disponibile</p>
+                )}
 
                 {embedUrl ? (
                   <>
@@ -230,3 +278,5 @@ const PlaylistGetter = () => {
 };
 
 export default PlaylistGetter;
+
+//oggi voglio implementare metodo put e delete qui e nel diary
