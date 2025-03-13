@@ -6,7 +6,7 @@ const MyNavbar = () => {
     <Navbar
       collapseOnSelect
       expand="lg"
-      className="bg-body-tertiary border-1 border-bottom border-dark fixed-top z-100000"
+      className="bg-body-tertiary border-1 border-bottom border-dark fixed-top z-1050 mb-2"
     >
       <Container fluid>
         <Navbar.Brand href="#home">Capstone</Navbar.Brand>

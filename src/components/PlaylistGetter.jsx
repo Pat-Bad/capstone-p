@@ -1,33 +1,43 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import { BsFillPlayFill, BsPauseFill } from "react-icons/bs"; // Import icons from react-icons
+import { BsFillPlayFill, BsPauseFill } from "react-icons/bs";
+import PlaylistModifierModal from "../components/PlaylistModifierModal"; // Assumendo che il modal sia un componente separato
 
 const PlaylistGetter = () => {
   const [playlists, setPlaylists] = useState([]);
-  const [currentVideoIndices, setCurrentVideoIndices] = useState();
-  const [vocalMemos, setVocalMemos] = useState([]);
-  const [playStates, setPlayStates] = useState({}); // Track play/pause state for each video
-  const iframeRefs = useRef({}); // Store refs to access iframe elements
+  const [currentVideoIndices, setCurrentVideoIndices] = useState({});
+  const [playStates, setPlayStates] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+
   const token = localStorage.getItem("token");
 
+  // Funzione per ottenere le playlist
   const getPlaylists = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/playlist", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/playlist/with-audio",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       const data = await response.json();
-      console.log(data);
+      console.log("Playlist data:", data);
+
       if (response.ok) {
         setPlaylists(data);
-        // Initialize current indices and play states for all playlists
+
+        // Inizializza gli indici correnti e gli stati di play
         const indices = {};
         const initialPlayStates = {};
         data.forEach((playlist) => {
           indices[playlist.id] = 0;
-          initialPlayStates[playlist.id] = false; // All videos start paused
+          initialPlayStates[playlist.id] = false;
         });
         setCurrentVideoIndices(indices);
         setPlayStates(initialPlayStates);
@@ -43,201 +53,203 @@ const PlaylistGetter = () => {
     getPlaylists();
   }, []);
 
-  //get memos associated with playlists
-  const getVocalMemos = async (playlistId) => {
-    try {
-      const response = fetch(
-        `http://localhost:8080/api/vocalmemo/${playlistId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = (await response).json();
-      if (response.ok) {
-        const memos = {};
-        data.forEach((memo) => {
-          memos[memo.playlistId] = memo; // Map memos by playlistId
-        });
-        setVocalMemos(memos);
-      } else {
-        console.log("Errore nel caricamento dei vocali"), data;
-      }
-    } catch (error) {
-      console.error("Errore nel caricamento dei vocali", error);
-    }
-  };
-  useEffect(() => {
-    // Iterate over playlists and fetch the associated vocal memo for each one
-    playlists.forEach((playlist) => {
-      getVocalMemos(playlist.id);
-    });
-  }, [playlists]); // Dependencies: update whenever playlists change
-
-  // Play video function
-  const playVideo = (playlistId) => {
-    setTimeout(() => {
-      const iframe = iframeRefs.current[playlistId];
-      if (!iframe) return;
-
-      // Play the video
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-      );
-
-      // Update play state
-      setPlayStates((prev) => ({
-        ...prev,
-        [playlistId]: true,
-      }));
-    }, 1000); // Short delay to ensure the iframe has loaded the new video
+  const handleModifyClick = (playlist) => {
+    setSelectedPlaylist(playlist);
+    setShowModal(true);
   };
 
-  // Navigation functions
+  // Funzioni di navigazione per video
   const handlePrevious = (playlistId) => {
     setCurrentVideoIndices((prev) => ({
       ...prev,
       [playlistId]: Math.max(0, prev[playlistId] - 1),
     }));
 
-    // Play the video after changing (with slight delay to allow iframe to update)
-    playVideo(playlistId);
+    // Reset play state
+    setPlayStates((prev) => ({
+      ...prev,
+      [playlistId]: false,
+    }));
   };
 
   const handleNext = (playlistId, maxIndex) => {
+    const nextIndex = Math.min(maxIndex, currentVideoIndices[playlistId] + 1);
     setCurrentVideoIndices((prev) => ({
       ...prev,
-      [playlistId]: Math.min(maxIndex, prev[playlistId] + 1),
+      [playlistId]: nextIndex,
     }));
 
-    // Play the video after changing (with slight delay to allow iframe to update)
-    playVideo(playlistId);
-  };
-
-  // Play/pause control function
-  const togglePlayPause = (playlistId) => {
-    const iframe = iframeRefs.current[playlistId];
-    if (!iframe) return;
-
-    const isPlaying = playStates[playlistId];
-
-    if (isPlaying) {
-      // Pause the video
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"pauseVideo","args":""}',
-        "*"
-      );
-    } else {
-      // Play the video
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-      );
-    }
-
-    // Update play state
+    // Reset play state per far partire il prossimo video
     setPlayStates((prev) => ({
       ...prev,
-      [playlistId]: !isPlaying,
+      [playlistId]: true,
     }));
   };
 
-  // Save iframe reference
-  const setIframeRef = (playlistId, element) => {
-    iframeRefs.current[playlistId] = element;
+  // Estrai l'ID del video da un URL di YouTube
+  const extractVideoId = (url) => {
+    if (!url) return null;
+
+    // Gestisce sia i formati "watch?v=" che "youtu.be/"
+    const watchRegex =
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+    const match = url.match(watchRegex);
+
+    return match && match[1] ? match[1] : null;
+  };
+
+  // Funzione per gestire play/pause
+  const togglePlayPause = (playlistId) => {
+    setPlayStates((prev) => ({
+      ...prev,
+      [playlistId]: !prev[playlistId],
+    }));
+  };
+
+  const deletePlaylist = async (playlistId) => {
+    const confirmDelete = window.confirm(
+      "Sei sicuro di voler eliminare questa playlist?"
+    );
+    if (!confirmDelete) return; // Se l'utente annulla, non fare nulla
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/playlist/${playlistId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Rimuovi la playlist dalla lista
+        setPlaylists((prevPlaylists) =>
+          prevPlaylists.filter((playlist) => playlist.id !== playlistId)
+        );
+        setCurrentVideoIndices((prevIndices) => {
+          const updatedIndices = { ...prevIndices };
+          delete updatedIndices[playlistId];
+          return updatedIndices;
+        });
+        setPlayStates((prevPlayStates) => {
+          const updatedPlayStates = { ...prevPlayStates };
+          delete updatedPlayStates[playlistId];
+          return updatedPlayStates;
+        });
+      } else {
+        console.error(
+          "Errore nell'eliminazione della playlist:",
+          await response.text()
+        );
+      }
+    } catch (error) {
+      console.error("Errore nel tentativo di eliminare la playlist:", error);
+    }
+  };
+
+  // Funzione per passare automaticamente al prossimo video
+  const handleVideoEnd = (playlistId, maxIndex) => {
+    const nextIndex = Math.min(maxIndex, currentVideoIndices[playlistId] + 1);
+    setCurrentVideoIndices((prev) => ({
+      ...prev,
+      [playlistId]: nextIndex,
+    }));
+
+    // Impostiamo play su true per far partire il prossimo video automaticamente
+    setPlayStates((prev) => ({
+      ...prev,
+      [playlistId]: true,
+    }));
   };
 
   return (
     <Container
       fluid
-      className="px-4"
+      className="px-4 mt-4"
     >
       <Row className="row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
         {playlists.map((playlist) => {
           const currentIndex = currentVideoIndices[playlist.id] || 0;
           const youtubeUrls = playlist.youtubeUrls || [];
           const youtubeUrl = youtubeUrls[currentIndex];
-          const embedUrl = youtubeUrl
-            ? youtubeUrl.replace("watch?v=", "embed/") +
-              "?modestbranding=1&controls=0&enablejsapi=1&origin=" +
-              window.location.origin
-            : "";
+          const videoId = extractVideoId(youtubeUrl);
           const isPlaying = playStates[playlist.id] || false;
-          const vocalMemo = vocalMemos[playlist.id];
 
           return (
             <Col key={playlist.id}>
               <div>
-                <h5 className="mt-5">{playlist.nomePlaylist}</h5>
-                {vocalMemo && vocalMemo.audioUrl ? (
-                  <div style={{ marginBottom: "10px" }}>
-                    <audio controls>
-                      <source
-                        src={vocalMemo.audioUrl}
-                        type="audio/mpeg"
-                      />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
-                ) : (
-                  <p>Nessun memo vocale disponibile</p>
-                )}
+                <h5 className="mt-5 mb-3 ps-5">{playlist.nomePlaylist}</h5>
 
-                {embedUrl ? (
+                {/* Audio del VocalMemo */}
+                <div style={{ marginBottom: "10px" }}>
+                  <audio
+                    id={`audio-${playlist.id}`}
+                    controls
+                    style={{ width: "260px", height: "40px" }}
+                  >
+                    <source
+                      src={playlist.url}
+                      type="audio/mpeg"
+                    />
+                    Your browser does not support the audio element.
+                  </audio>
+                  <Button
+                    size="sm"
+                    onClick={() => deletePlaylist(playlist.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+                {videoId ? (
                   <>
                     <div
                       style={{
                         position: "relative",
-                        paddingTop: "25%",
+                        paddingBottom: "56.25%", // 16:9 aspect ratio
+                        height: 0,
+                        overflow: "hidden",
                         marginBottom: "10px",
+                        backgroundColor: "#000",
                       }}
                     >
                       <iframe
-                        ref={(el) => setIframeRef(playlist.id, el)}
                         style={{
                           position: "absolute",
                           top: 0,
                           left: 0,
                           width: "100%",
-                          height: "0", // Fixed from 0 to 100%
+                          height: "100%",
+                          border: "none",
                         }}
-                        src={embedUrl}
-                        title="YouTube video player"
-                        frameBorder={0}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        src={`https://www.youtube.com/embed/${videoId}?autoplay=${
+                          isPlaying ? 1 : 0
+                        }&controls=1&modestbranding=1&rel=0`}
+                        title={`YouTube video player - ${playlist.nomePlaylist}`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
+                        onEnded={() =>
+                          handleVideoEnd(playlist.id, youtubeUrls.length - 1)
+                        }
                       ></iframe>
 
-                      {/* Custom play/pause overlay */}
                       <div
                         style={{
                           position: "absolute",
-                          bottom: "0",
-                          left: "0",
-                          right: "0",
-                          background: "rgba(0, 0, 0, 0.98)",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          padding: "8px 12px",
-                          zIndex: 100,
+                          bottom: "10px",
+                          right: "10px",
+                          background: "rgba(0, 0, 0, 0.7)",
+                          color: "white",
+                          padding: "5px 10px",
+                          borderRadius: "4px",
+                          zIndex: 1000,
+                          fontSize: "14px",
                         }}
                       >
-                        <Button
-                          variant="link"
-                          className="p-0 text-white"
-                          onClick={() => togglePlayPause(playlist.id)}
-                          style={{ fontSize: "24px" }}
-                        >
-                          {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
-                        </Button>
-
-                        <div className="text-white">
-                          {currentIndex + 1} / {youtubeUrls.length}
-                        </div>
+                        {currentIndex + 1} / {youtubeUrls.length}
                       </div>
                     </div>
 
@@ -253,6 +265,14 @@ const PlaylistGetter = () => {
                         </Button>
 
                         <Button
+                          variant="outline-primary"
+                          size="sm"
+                          onClick={() => togglePlayPause(playlist.id)}
+                        >
+                          {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
+                        </Button>
+
+                        <Button
                           variant="outline-dark"
                           size="sm"
                           onClick={() =>
@@ -262,6 +282,21 @@ const PlaylistGetter = () => {
                         >
                           Successivo
                         </Button>
+                        <div>
+                          <Button
+                            size="sm"
+                            onClick={() => deletePlaylist(playlist.id)}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="m-1"
+                            onClick={() => handleModifyClick(playlist)}
+                          >
+                            Modify playlist
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </>
@@ -273,10 +308,23 @@ const PlaylistGetter = () => {
           );
         })}
       </Row>
+
+      {selectedPlaylist && (
+        <PlaylistModifierModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+          playlist={selectedPlaylist}
+          updatePlaylist={(updatedPlaylist) => {
+            setPlaylists((prevPlaylists) =>
+              prevPlaylists.map((p) =>
+                p.id === updatedPlaylist.id ? updatedPlaylist : p
+              )
+            );
+          }}
+        />
+      )}
     </Container>
   );
 };
 
 export default PlaylistGetter;
-
-//oggi voglio implementare metodo put e delete qui e nel diary

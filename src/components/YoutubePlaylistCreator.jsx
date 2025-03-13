@@ -59,6 +59,8 @@ const YouTubePlaylistCreator = () => {
     };
   }, [isRecording]);
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // Funzione per caricare l'audio su Cloudinary e salvare la playlist
   const uploadAudioToBackend = async (audioBlob) => {
     const formData = new FormData();
@@ -77,7 +79,7 @@ const YouTubePlaylistCreator = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/playlist/with-audio",
+        "http://localhost:8080/api/playlist/with-audio", //endpoint con cloudinary e db
         {
           method: "POST",
           headers: {
@@ -101,6 +103,8 @@ const YouTubePlaylistCreator = () => {
     }
   };
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // Funzione per cercare i video YouTube
   const handleSearch = async () => {
     if (searchQuery) {
@@ -109,10 +113,14 @@ const YouTubePlaylistCreator = () => {
     }
   };
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // Funzione per aggiungere video selezionati alla playlist
   const handleAddToPlaylist = (video) => {
     setSelectedVideos((prev) => [...prev, video]);
   };
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Funzione per creare la playlist con audio e video
   const handleCreatePlaylistWithAudio = async () => {
@@ -123,6 +131,8 @@ const YouTubePlaylistCreator = () => {
 
     await uploadAudioToBackend();
   };
+
+  //////////////////////////////////////////// RENDERING //////////////////////////////////////////////////////
 
   return (
     <Container>
@@ -201,8 +211,8 @@ const YouTubePlaylistCreator = () => {
       <Row className="mt-5">
         <Button
           className="w-25"
-          onClick={handleCreatePlaylistWithAudio} // Non passare audioUrl qui, usalo già dentro la funzione
-          disabled={!audioUrl || !playlistName} // Disabilita se non c'è un audio o un nome per la playlist
+          onClick={handleCreatePlaylistWithAudio}
+          disabled={!audioUrl || !playlistName}
         >
           Save Playlist
         </Button>
