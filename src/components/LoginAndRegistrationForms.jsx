@@ -69,11 +69,10 @@ const LoginAndRegistrationForms = () => {
   };
 
   return (
-    <Container className="mt-5">
-      <Row className="w-100 mb-5">
-        <div class="line diag diag-1"></div>
+    <Container className="mt-5 ">
+      <Row className="mt-5 w-100 mb-5 align-content-center">
         <Col className="col-6">
-          <h5>Register</h5>
+          <h3>Register</h3>
           <Form onSubmit={handleRegisterSubmit}>
             <div className="mb-3">
               <Form.Label>Username</Form.Label>
@@ -83,6 +82,7 @@ const LoginAndRegistrationForms = () => {
                 name="username"
                 value={registerData.username}
                 onChange={handleRegisterChange}
+                className="w-50"
               />
             </div>
             <div className="mb-3">
@@ -91,6 +91,7 @@ const LoginAndRegistrationForms = () => {
                 type="email"
                 placeholder="Enter email"
                 name="email"
+                className="w-50"
                 value={registerData.email}
                 onChange={handleRegisterChange}
               />
@@ -101,6 +102,7 @@ const LoginAndRegistrationForms = () => {
                 type="password"
                 placeholder="Password"
                 name="password"
+                className="w-50"
                 value={registerData.password}
                 onChange={handleRegisterChange}
               />
@@ -108,15 +110,14 @@ const LoginAndRegistrationForms = () => {
             <Button
               variant="primary"
               type="submit"
+              className="mt-4"
             >
               Register and try to login 😊
             </Button>
           </Form>
         </Col>
-      </Row>
-      <Row className="w-100 d-flex justify-content-end">
         <Col className="col-6">
-          <h5>Login</h5>
+          <h4>Login</h4>
           <Form onSubmit={handleLoginSubmit}>
             <div className="mb-3">
               <Form.Label>Username</Form.Label>
@@ -124,16 +125,18 @@ const LoginAndRegistrationForms = () => {
                 type="text"
                 placeholder="Enter username"
                 name="username"
+                className="w-50"
                 value={loginData.username}
                 onChange={handleLoginChange}
               />
             </div>
-            <div className="mb-3">
+            <div>
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Password"
                 name="password"
+                className="w-50"
                 value={loginData.password}
                 onChange={handleLoginChange}
               />
@@ -141,6 +144,7 @@ const LoginAndRegistrationForms = () => {
             <Button
               variant="primary"
               type="submit"
+              className="mt-3"
             >
               Login 🎶
             </Button>
