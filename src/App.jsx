@@ -7,6 +7,7 @@ import AudioGetter from "./components/AudioGetter";
 import MyNavbar from "./components/MyNavbar";
 import ProfilePage from "./pages/ProfilePage";
 import DiaryPage from "./pages/DiaryPage";
+import MyFooter from "./components/MyFooter";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             element={<ProfilePage />}
           />
         </Routes>
+        <MyFooter />
       </div>
     </BrowserRouter>
   );

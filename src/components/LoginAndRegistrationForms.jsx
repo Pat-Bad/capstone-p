@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const LoginAndRegistrationForms = () => {
+  const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     username: "",
     email: "",
     password: "",
   });
   const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleRegisterChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +24,7 @@ const LoginAndRegistrationForms = () => {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     fetch("http://localhost:8080/api/auth/register", {
       method: "POST",
@@ -33,12 +37,15 @@ const LoginAndRegistrationForms = () => {
       .then((data) => {
         console.log(data);
         console.log("Registration successful", data);
+        setLoading(false);
       })
       .catch((error) => console.error("Error during registration:", error));
+    setLoading(false);
   };
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
@@ -53,13 +60,18 @@ const LoginAndRegistrationForms = () => {
           localStorage.setItem("token", data.token);
         }
         console.log("Login successful", data);
+
+        navigate("/playlist");
+        setLoading(false);
       })
       .catch((error) => console.error("Error during login:", error));
+    setLoading(false);
   };
 
   return (
     <Container className="mt-5">
       <Row className="w-100 mb-5">
+        <div class="line diag diag-1"></div>
         <Col className="col-6">
           <h5>Register</h5>
           <Form onSubmit={handleRegisterSubmit}>
@@ -97,7 +109,7 @@ const LoginAndRegistrationForms = () => {
               variant="primary"
               type="submit"
             >
-              Register
+              Register and try to login 😊
             </Button>
           </Form>
         </Col>
@@ -130,7 +142,7 @@ const LoginAndRegistrationForms = () => {
               variant="primary"
               type="submit"
             >
-              Login
+              Login 🎶
             </Button>
           </Form>
         </Col>

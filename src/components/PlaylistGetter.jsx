@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { BsFillPlayFill, BsPauseFill } from "react-icons/bs";
 import PlaylistModifierModal from "../components/PlaylistModifierModal"; // Assumendo che il modal sia un componente separato
+import {
+  EmailShareButton,
+  WhatsappShareButton,
+  FacebookShareButton,
+} from "react-share";
+import { FaEnvelope, FaWhatsapp, FaFacebook } from "react-icons/fa";
 
 const PlaylistGetter = () => {
   const [playlists, setPlaylists] = useState([]);
@@ -20,8 +26,8 @@ const PlaylistGetter = () => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
         }
       );
@@ -107,6 +113,10 @@ const PlaylistGetter = () => {
   };
 
   const deletePlaylist = async (playlistId) => {
+    if (!token) {
+      alert("Devi essere loggato per eliminare la playlist.");
+      return;
+    }
     const confirmDelete = window.confirm(
       "Sei sicuro di voler eliminare questa playlist?"
     );
@@ -199,6 +209,7 @@ const PlaylistGetter = () => {
                   <Button
                     size="sm"
                     onClick={() => deletePlaylist(playlist.id)}
+                    disabled={!token}
                   >
                     Delete
                   </Button>
@@ -286,6 +297,7 @@ const PlaylistGetter = () => {
                           <Button
                             size="sm"
                             onClick={() => deletePlaylist(playlist.id)}
+                            disabled={!token}
                           >
                             Delete
                           </Button>
@@ -296,6 +308,29 @@ const PlaylistGetter = () => {
                           >
                             Modify playlist
                           </Button>
+                          <div className="d-flex">
+                            <EmailShareButton
+                              url={`http://localhost:8080/playlist/${playlist.id}`}
+                              subject={`Check out my playlist: ${playlist.nomePlaylist}`}
+                              body={`Hey! Here's a playlist I made: ${playlist.nomePlaylist}. Enjoy!`}
+                            >
+                              <FaEnvelope size={20} />
+                            </EmailShareButton>
+
+                            <WhatsappShareButton
+                              url={`http://localhost:8080/playlist/${playlist.id}`}
+                              title={`Check out this playlist: ${playlist.nomePlaylist}`}
+                            >
+                              <FaWhatsapp size={20} />
+                            </WhatsappShareButton>
+
+                            <FacebookShareButton
+                              url={`http://localhost:8080/playlist/${playlist.id}`}
+                              quote={`Check out this awesome playlist: ${playlist.nomePlaylist}`}
+                            >
+                              <FaFacebook size={20} />
+                            </FacebookShareButton>
+                          </div>
                         </div>
                       </div>
                     )}
