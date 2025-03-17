@@ -1,25 +1,40 @@
-#root {
-  height: 100%;
-  width: 100%;
-}
-
-
+html,
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
   background-image: url("./assets/openart-ec0c637caede449fa577744d86208237_raw.jpg");
   background-size: cover;
-  /* Adatta l'immagine per coprire l'intera pagina */
-  background-position: center center;
-  /* Centra l'immagine */
+  background-position: center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
-  /* Fissa l'immagine quando scorri la pagina */
-  height: 100vh;
-  /* Imposta l'altezza a 100% della finestra del browser */
-  margin: 0;
-  /* Rimuove i margini predefiniti */
-  padding-top: 70px;
-  overflow: auto;
   font-family: "Jersey 15", sans-serif;
   font-weight: 300;
   font-style: normal;
   font-size: 1.2em;
+  overflow-x: hidden;
+  padding-top: 60px;
+  padding-bottom: 60px;
+
+}
+
+main {
+  flex-grow: 1;
+}
+
+header {
+  z-index: 9999;
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+footer {
+  z-index: 9999;
+  position: fixed;
+  /* Cambiato da absolute a relative */
+  width: 100%;
+  bottom: 0;
+
 }

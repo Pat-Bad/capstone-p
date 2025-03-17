@@ -69,12 +69,19 @@ const LoginAndRegistrationForms = () => {
   };
 
   return (
-    <Container className="mt-5 ">
-      <Row className="mt-5 w-100 mb-5 align-content-center">
-        <Col className="col-6">
-          <h3>Register</h3>
+    <Container
+      fluid
+      className="py-4"
+    >
+      <Row className="g-0">
+        <Col
+          xs={12}
+          md={6}
+          className="p-3"
+        >
+          <h2 className="my-4">Register</h2>
           <Form onSubmit={handleRegisterSubmit}>
-            <div className="mb-3">
+            <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
@@ -82,71 +89,72 @@ const LoginAndRegistrationForms = () => {
                 name="username"
                 value={registerData.username}
                 onChange={handleRegisterChange}
-                className="w-50"
               />
-            </div>
-            <div className="mb-3">
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
                 name="email"
-                className="w-50"
                 value={registerData.email}
                 onChange={handleRegisterChange}
               />
-            </div>
-            <div className="mb-3">
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Password"
                 name="password"
-                className="w-50"
                 value={registerData.password}
                 onChange={handleRegisterChange}
               />
-            </div>
+            </Form.Group>
             <Button
               variant="primary"
               type="submit"
-              className="mt-4"
+              className="mt-3"
+              disabled={loading}
             >
-              Register and try to login 😊
+              {loading ? "Processing..." : "Register and try to login 😊"}
             </Button>
           </Form>
         </Col>
-        <Col className="col-6">
-          <h4>Login</h4>
+        <Col
+          xs={12}
+          md={6}
+          className="p-3"
+        >
+          <h4 className="mb-3">Login</h4>
           <Form onSubmit={handleLoginSubmit}>
-            <div className="mb-3">
+            <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter username"
                 name="username"
-                className="w-50"
                 value={loginData.username}
                 onChange={handleLoginChange}
               />
-            </div>
-            <div>
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Password"
                 name="password"
-                className="w-50"
                 value={loginData.password}
                 onChange={handleLoginChange}
               />
-            </div>
+            </Form.Group>
             <Button
               variant="primary"
               type="submit"
               className="mt-3"
+              disabled={loading}
             >
-              Login 🎶
+              {loading ? "Processing..." : "Login 🎶"}
             </Button>
           </Form>
         </Col>

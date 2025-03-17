@@ -12,8 +12,10 @@ import MyFooter from "./components/MyFooter";
 function App() {
   return (
     <BrowserRouter>
-      <div>
+      <header>
         <MyNavbar />
+      </header>
+      <main>
         <Routes>
           <Route
             path="/playlist"
@@ -27,7 +29,6 @@ function App() {
             path="/audiorecorder"
             element={<AudioRecorder />}
           />
-
           <Route
             path="/diary"
             element={<DiaryPage />}
@@ -37,10 +38,11 @@ function App() {
             element={<ProfilePage />}
           />
         </Routes>
+      </main>
+      <footer>
         <MyFooter />
-      </div>
+      </footer>
     </BrowserRouter>
   );
 }
-
 export default App;

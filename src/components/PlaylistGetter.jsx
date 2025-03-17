@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import { BsFillPlayFill, BsPauseFill } from "react-icons/bs";
-import PlaylistModifierModal from "../components/PlaylistModifierModal"; // Assumendo che il modal sia un componente separato
+import ReactPlayer from "react-player";
+import {
+  BsFillPlayFill,
+  BsPauseFill,
+  BsFastForwardFill,
+  BsRewindFill,
+} from "react-icons/bs";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { MdModeEdit } from "react-icons/md";
+import PlaylistModifierModal from "../components/PlaylistModifierModal";
 import {
   EmailShareButton,
   WhatsappShareButton,
@@ -176,173 +184,183 @@ const PlaylistGetter = () => {
   };
 
   return (
-    <Container
-      fluid
-      className="px-4 mt-4"
-    >
-      <Row className="row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
-        {playlists.map((playlist) => {
-          const currentIndex = currentVideoIndices[playlist.id] || 0;
-          const youtubeUrls = playlist.youtubeUrls || [];
-          const youtubeUrl = youtubeUrls[currentIndex];
-          const videoId = extractVideoId(youtubeUrl);
-          const isPlaying = playStates[playlist.id] || false;
+    <Row className="d-flex justify-content-between">
+      {playlists.map((playlist) => {
+        const currentIndex = currentVideoIndices[playlist.id] || 0;
+        const youtubeUrls = playlist.youtubeUrls || [];
+        const youtubeUrl = youtubeUrls[currentIndex];
+        const videoId = extractVideoId(youtubeUrl);
+        const isPlaying = playStates[playlist.id] || false;
 
-          return (
-            <Col key={playlist.id}>
-              <div>
-                <h5 className="mt-5 mb-3 ps-5">{playlist.nomePlaylist}</h5>
-
-                {/* Audio del VocalMemo */}
-                <div style={{ marginBottom: "10px" }}>
-                  <audio
-                    id={`audio-${playlist.id}`}
-                    controls
-                    style={{ width: "260px", height: "40px" }}
-                  >
-                    <source
-                      src={playlist.url}
-                      type="audio/mpeg"
-                    />
-                    Your browser does not support the audio element.
-                  </audio>
+        return (
+          <Col
+            key={playlist.id}
+            className="col-sm-12 col-md-6 col-lg-4 border border-dark border-2 align-content-center justify-content-center px-2"
+            style={{
+              borderRadius: "20px",
+            }}
+          >
+            <div>
+              <div className="d-flex justify-content-between align-items-center my-2 ">
+                <h5 className="ps-3">{playlist.nomePlaylist}</h5>
+                <div className="d-flex">
                   <Button
-                    size="sm"
+                    style={{
+                      color: "black",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      padding: "5px",
+                    }}
                     onClick={() => deletePlaylist(playlist.id)}
                     disabled={!token}
                   >
-                    Delete
+                    <RiDeleteBin6Line />
+                  </Button>
+                  <Button
+                    style={{
+                      color: "black",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      padding: "5px",
+                    }}
+                    onClick={() => handleModifyClick(playlist)}
+                  >
+                    <MdModeEdit />
                   </Button>
                 </div>
-                {videoId ? (
-                  <>
+              </div>
+
+              {/* Audio del VocalMemo */}
+              <div>
+                <audio
+                  id={`audio-${playlist.id}`}
+                  controls
+                >
+                  <source
+                    src={playlist.url}
+                    type="audio/mpeg"
+                  />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+              {videoId ? (
+                <>
+                  <div>
+                    <iframe
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "1%",
+                        height: "1%",
+                        border: "none",
+                      }}
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=${
+                        isPlaying ? 1 : 0
+                      }&controls=1&modestbranding=1&rel=0`}
+                      title={`YouTube video player - ${playlist.nomePlaylist}`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      onEnded={() =>
+                        handleVideoEnd(playlist.id, youtubeUrls.length - 1)
+                      }
+                    ></iframe>
+
                     <div
                       style={{
-                        position: "relative",
-                        paddingBottom: "56.25%", // 16:9 aspect ratio
-                        height: 0,
-                        overflow: "hidden",
-                        marginBottom: "10px",
-                        backgroundColor: "#000",
+                        position: "absolute",
+                        bottom: "10px",
+                        right: "10px",
+                        background: "rgba(0, 0, 0, 0.7)",
+                        color: "white",
+                        padding: "5px 10px",
+                        borderRadius: "4px",
+                        zIndex: 1000,
+                        fontSize: "14px",
                       }}
                     >
-                      <iframe
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%",
-                          border: "none",
-                        }}
-                        src={`https://www.youtube.com/embed/${videoId}?autoplay=${
-                          isPlaying ? 1 : 0
-                        }&controls=1&modestbranding=1&rel=0`}
-                        title={`YouTube video player - ${playlist.nomePlaylist}`}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        onEnded={() =>
-                          handleVideoEnd(playlist.id, youtubeUrls.length - 1)
-                        }
-                      ></iframe>
-
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "10px",
-                          right: "10px",
-                          background: "rgba(0, 0, 0, 0.7)",
-                          color: "white",
-                          padding: "5px 10px",
-                          borderRadius: "4px",
-                          zIndex: 1000,
-                          fontSize: "14px",
-                        }}
-                      >
-                        {currentIndex + 1} / {youtubeUrls.length}
-                      </div>
+                      {currentIndex + 1} / {youtubeUrls.length}
                     </div>
+                  </div>
 
-                    {youtubeUrls.length > 1 && (
-                      <div className="d-flex justify-content-between align-items-center mt-2">
-                        <Button
-                          variant="outline-dark"
-                          size="sm"
-                          onClick={() => handlePrevious(playlist.id)}
-                          disabled={currentIndex === 0}
-                        >
-                          Precedente
-                        </Button>
+                  {youtubeUrls.length > 1 && (
+                    <div className="d-flex my-2 d-flex justify-content-center">
+                      <Button
+                        variant="outline-dark"
+                        className="me-2"
+                        size="sm"
+                        onClick={() => handlePrevious(playlist.id)}
+                        disabled={currentIndex === 0}
+                      >
+                        <BsRewindFill />
+                      </Button>
 
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => togglePlayPause(playlist.id)}
-                        >
-                          {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
-                        </Button>
+                      <Button
+                        variant="outline-dark"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => togglePlayPause(playlist.id)}
+                      >
+                        {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
+                      </Button>
 
-                        <Button
-                          variant="outline-dark"
-                          size="sm"
-                          onClick={() =>
-                            handleNext(playlist.id, youtubeUrls.length - 1)
-                          }
-                          disabled={currentIndex === youtubeUrls.length - 1}
-                        >
-                          Successivo
-                        </Button>
-                        <div>
-                          <Button
-                            size="sm"
-                            onClick={() => deletePlaylist(playlist.id)}
-                            disabled={!token}
-                          >
-                            Delete
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="m-1"
-                            onClick={() => handleModifyClick(playlist)}
-                          >
-                            Modify playlist
-                          </Button>
-                          <div className="d-flex">
-                            <EmailShareButton
-                              url={`http://localhost:8080/playlist/${playlist.id}`}
-                              subject={`Check out my playlist: ${playlist.nomePlaylist}`}
-                              body={`Hey! Here's a playlist I made: ${playlist.nomePlaylist}. Enjoy!`}
-                            >
-                              <FaEnvelope size={20} />
-                            </EmailShareButton>
+                      <Button
+                        variant="outline-dark"
+                        size="sm"
+                        className="me-2"
+                        onClick={() =>
+                          handleNext(playlist.id, youtubeUrls.length - 1)
+                        }
+                        disabled={currentIndex === youtubeUrls.length - 1}
+                      >
+                        <BsFastForwardFill />
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p>Nessun video disponibile</p>
+              )}
+            </div>
+            <div className="text-end">
+              <EmailShareButton
+                className="px-1"
+                url={`http://localhost:8080/playlist/${playlist.id}`}
+                subject={`Check out my playlist: ${playlist.nomePlaylist}`}
+                body={`Hey! Here's a playlist I made: ${playlist.nomePlaylist}. Enjoy!`}
+              >
+                <FaEnvelope
+                  size={20}
+                  color="white"
+                />
+              </EmailShareButton>
 
-                            <WhatsappShareButton
-                              url={`http://localhost:8080/playlist/${playlist.id}`}
-                              title={`Check out this playlist: ${playlist.nomePlaylist}`}
-                            >
-                              <FaWhatsapp size={20} />
-                            </WhatsappShareButton>
+              <WhatsappShareButton
+                className="px-1"
+                url={`http://localhost:8080/playlist/${playlist.id}`}
+                title={`Check out this playlist: ${playlist.nomePlaylist}`}
+              >
+                <FaWhatsapp
+                  size={20}
+                  color="green"
+                />
+              </WhatsappShareButton>
 
-                            <FacebookShareButton
-                              url={`http://localhost:8080/playlist/${playlist.id}`}
-                              quote={`Check out this awesome playlist: ${playlist.nomePlaylist}`}
-                            >
-                              <FaFacebook size={20} />
-                            </FacebookShareButton>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p>Nessun video disponibile</p>
-                )}
-              </div>
-            </Col>
-          );
-        })}
-      </Row>
+              <FacebookShareButton
+                className="px-1"
+                url={`http://localhost:8080/playlist/${playlist.id}`}
+                quote={`Check out this awesome playlist: ${playlist.nomePlaylist}`}
+              >
+                <FaFacebook
+                  size={20}
+                  color="blue"
+                />
+              </FacebookShareButton>
+            </div>
+          </Col>
+        );
+      })}
 
       {selectedPlaylist && (
         <PlaylistModifierModal
@@ -358,7 +376,7 @@ const PlaylistGetter = () => {
           }}
         />
       )}
-    </Container>
+    </Row>
   );
 };
 
