@@ -3,7 +3,6 @@ import "./App.css";
 import LoginAndRegistrationForms from "./components/LoginAndRegistrationForms";
 import AudioRecorder from "./components/AudioRecorder";
 import YouTubePlaylistCreator from "./components/YoutubePlaylistCreator";
-import AudioGetter from "./components/AudioGetter";
 import MyNavbar from "./components/MyNavbar";
 import ProfilePage from "./pages/ProfilePage";
 import DiaryPage from "./pages/DiaryPage";
@@ -15,7 +14,7 @@ function App() {
       <header>
         <MyNavbar />
       </header>
-      <main>
+      <main style={{ paddingTop: "160px", paddingBottom: "80px" }}>
         <Routes>
           <Route
             path="/playlist"
@@ -39,10 +38,9 @@ function App() {
           />
         </Routes>
       </main>
-      <footer>
-        <MyFooter />
-      </footer>
+      <MyFooter />
     </BrowserRouter>
   );
 }
+
 export default App;

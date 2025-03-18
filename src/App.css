@@ -1,40 +1,35 @@
 html,
 body {
-  height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
-  background-image: url("./assets/openart-ec0c637caede449fa577744d86208237_raw.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  height: 100%;
   font-family: "Jersey 15", sans-serif;
-  font-weight: 300;
-  font-style: normal;
   font-size: 1.2em;
   overflow-x: hidden;
-  padding-top: 60px;
-  padding-bottom: 60px;
-
+  background-image: url("./assets/openart-ec0c637caede449fa577744d86208237_raw.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-main {
-  flex-grow: 1;
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
 header {
-  z-index: 9999;
   position: fixed;
-  width: 100%;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1050;
+  background-color: #3DB3CF;
+
 }
 
-footer {
-  z-index: 9999;
-  position: fixed;
-  /* Cambiato da absolute a relative */
-  width: 100%;
-  bottom: 0;
 
+footer {
+  background-color: #3BB2CB;
 }

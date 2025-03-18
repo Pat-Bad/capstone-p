@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const LoginAndRegistrationForms = () => {
@@ -69,29 +69,34 @@ const LoginAndRegistrationForms = () => {
   };
 
   return (
-    <Container
-      fluid
-      className="py-4"
-    >
-      <Row className="g-0">
-        <Col
-          xs={12}
-          md={6}
-          className="p-3"
-        >
-          <h2 className="my-4">Register</h2>
+    <div className="container">
+      <div className="row g-3 justify-content-center">
+        <div class="col-md-5 p-4 ">
+          <h2 className="mb-3">Register</h2>
           <Form onSubmit={handleRegisterSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter username"
-                name="username"
-                value={registerData.username}
-                onChange={handleRegisterChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
+            <span className="d-flex">
+              <Form.Group className="mb-3 w-50">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter username"
+                  name="username"
+                  value={registerData.username}
+                  onChange={handleRegisterChange}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 w-50 ps-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  value={registerData.password}
+                  onChange={handleRegisterChange}
+                />
+              </Form.Group>
+            </span>
+            <Form.Group className="mb-3 ">
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
@@ -101,34 +106,31 @@ const LoginAndRegistrationForms = () => {
                 onChange={handleRegisterChange}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={registerData.password}
-                onChange={handleRegisterChange}
-              />
-            </Form.Group>
             <Button
-              variant="primary"
               type="submit"
-              className="mt-3"
               disabled={loading}
+              className="mt-4 fs-5"
+              style={{
+                backgroundColor: "#269BC6",
+                border: "2px solid #4B67A1",
+              }}
             >
+              {loading ? (
+                <Spinner
+                  animation="border"
+                  size="sm"
+                  style={{ marginRight: "10px" }}
+                />
+              ) : null}
               {loading ? "Processing..." : "Register and try to login 😊"}
             </Button>
           </Form>
-        </Col>
-        <Col
-          xs={12}
-          md={6}
-          className="p-3"
-        >
-          <h4 className="mb-3">Login</h4>
+        </div>
+
+        <div class="col-md-5 p-4">
+          <h2 className="mb-3">Login</h2>
           <Form onSubmit={handleLoginSubmit}>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 w-75">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
@@ -138,7 +140,7 @@ const LoginAndRegistrationForms = () => {
                 onChange={handleLoginChange}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 w-75">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
@@ -149,17 +151,27 @@ const LoginAndRegistrationForms = () => {
               />
             </Form.Group>
             <Button
-              variant="primary"
               type="submit"
-              className="mt-3"
               disabled={loading}
+              className="mt-4 fs-5"
+              style={{
+                backgroundColor: "#269BC6",
+                border: "2px solid #4B67A1",
+              }}
             >
+              {loading ? (
+                <Spinner
+                  animation="border"
+                  size="sm"
+                  style={{ marginRight: "10px" }}
+                />
+              ) : null}
               {loading ? "Processing..." : "Login 🎶"}
             </Button>
           </Form>
-        </Col>
-      </Row>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };
 

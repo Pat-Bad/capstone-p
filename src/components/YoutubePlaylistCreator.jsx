@@ -137,9 +137,9 @@ const YouTubePlaylistCreator = () => {
   return (
     <Container>
       <Row className="mt-3">
-        <h3 className="mb-2">Create a new playlist</h3>
+        <h3 className="mb-2 ps-0">Create a new playlist</h3>
         <input
-          className="w-50"
+          className="ps-5 w-50"
           type="text"
           placeholder="What should we call it?"
           value={playlistName}
@@ -148,16 +148,18 @@ const YouTubePlaylistCreator = () => {
       </Row>
 
       <Row className="mt-5">
-        <Col>
+        <Col className="ps-0">
           <input
-            className="w-50"
+            className=" ps-5 w-50"
             type="text"
             placeholder="Search for music..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Button
-            className="ms-3 w-25"
+            className="ms-3 w-25 fs-5"
+            à
+            style={{ backgroundColor: "#E482BB", border: "2px solid #C465A9" }}
             onClick={handleSearch}
           >
             Search
@@ -188,7 +190,7 @@ const YouTubePlaylistCreator = () => {
         </Col>
       </Row>
 
-      <Row className="mt-5 ms-auto me-auto justify-content-evenly">
+      <Row className="mt-5 ">
         <button
           className="w-25"
           onClick={() => setIsRecording(!isRecording)}
