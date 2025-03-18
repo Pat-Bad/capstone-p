@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Row, Card } from "react-bootstrap";
 
 // Funzione per cercare i video su YouTube
 const searchYouTube = async (query) => {
@@ -19,6 +19,7 @@ const YouTubePlaylistCreator = () => {
   const [playlistId, setPlaylistId] = useState(null); // ID della playlist
   const [isRecording, setIsRecording] = useState(false); // Stato di registrazione
   const [audioUrl, setAudioUrl] = useState(null); // URL dell'audio
+  const [showModal, setShowModal] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
@@ -39,7 +40,7 @@ const YouTubePlaylistCreator = () => {
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudioUrl(audioUrl);
             audioChunksRef.current = [];
-            await uploadAudioToBackend(audioBlob); // Upload the audio after stopping the recording
+            await uploadAudioToBackend(audioBlob); //carico subito
           };
           mediaRecorderRef.current.start();
         })
@@ -58,8 +59,6 @@ const YouTubePlaylistCreator = () => {
       }
     };
   }, [isRecording]);
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Funzione per caricare l'audio su Cloudinary e salvare la playlist
   const uploadAudioToBackend = async (audioBlob) => {
@@ -93,6 +92,7 @@ const YouTubePlaylistCreator = () => {
         const playlistData = await response.json();
         console.log(playlistData);
         setPlaylistId(playlistData.id);
+
         console.log("Playlist creata con successo", playlistData);
       } else {
         const errorData = await response.json();
@@ -103,8 +103,6 @@ const YouTubePlaylistCreator = () => {
     }
   };
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // Funzione per cercare i video YouTube
   const handleSearch = async () => {
     if (searchQuery) {
@@ -113,112 +111,195 @@ const YouTubePlaylistCreator = () => {
     }
   };
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // Funzione per aggiungere video selezionati alla playlist
   const handleAddToPlaylist = (video) => {
     setSelectedVideos((prev) => [...prev, video]);
   };
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // Funzione per creare la playlist con audio e video
-  const handleCreatePlaylistWithAudio = async () => {
-    if (!audioUrl || !playlistName) {
-      alert("Devi registrare un memo vocale e dare un nome alla playlist.");
-      return;
-    }
-
-    await uploadAudioToBackend();
+  // Funzione per rimuovere video dalla playlist
+  const handleRemoveFromPlaylist = (videoId) => {
+    setSelectedVideos((prev) =>
+      prev.filter((video) => video.id.videoId !== videoId)
+    );
   };
 
-  //////////////////////////////////////////// RENDERING //////////////////////////////////////////////////////
-
   return (
-    <Container>
+    <Container className="pt-5 pt-md-4 pt-lg-5 mt-2 mt-md-3">
       <Row className="mt-3">
-        <h3 className="mb-2 ps-0">Create a new playlist</h3>
-        <input
-          className="ps-5 w-50"
-          type="text"
-          placeholder="What should we call it?"
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-        />
-      </Row>
-
-      <Row className="mt-5">
-        <Col className="ps-0">
-          <input
-            className=" ps-5 w-50"
-            type="text"
-            placeholder="Search for music..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button
-            className="ms-3 w-25 fs-5"
-            à
-            style={{ backgroundColor: "#E482BB", border: "2px solid #C465A9" }}
-            onClick={handleSearch}
-          >
-            Search
-          </Button>
-
-          <div className="mt-5">
-            {videos.map((video) => (
-              <div key={`${video.id.videoId}-${video.snippet.title}`}>
-                <h5>{video.snippet.title}</h5>
-                <Button
-                  className="mb-3"
-                  onClick={() => handleAddToPlaylist(video)}
-                >
-                  Add to playlist
-                </Button>
-              </div>
-            ))}
+        <Col md={6}>
+          <h3 className="mb-3">Create a new playlist</h3>
+          <div className="input-group mb-4">
+            <input
+              className="form-control py-2"
+              type="text"
+              placeholder="What should we call it?"
+              value={playlistName}
+              onChange={(e) => setPlaylistName(e.target.value)}
+            />
           </div>
         </Col>
-
-        <Col>
-          <h3>Selected music</h3>
-          <ul>
-            {selectedVideos.map((video) => (
-              <li key={video.id.videoId}>{video.snippet.title}</li>
-            ))}
-          </ul>
-        </Col>
       </Row>
 
-      <Row className="mt-5 ">
-        <button
-          className="w-25"
-          onClick={() => setIsRecording(!isRecording)}
+      <Row className="mt-4">
+        <Col
+          md={6}
+          className="mb-4"
         >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
-        {audioUrl && (
-          <div className="w-50 ms-3">
-            <audio controls>
-              <source
-                src={audioUrl}
-                type="audio/mpeg"
-              />
-              Il tuo browser non supporta l'elemento audio.
-            </audio>
+          <div className="input-group mb-3 mt-5">
+            <input
+              className="form-control py-2"
+              type="text"
+              placeholder="Search for music..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSearch()} //per cercare anche con invio
+            />
+            <Button
+              className="px-4"
+              style={{
+                backgroundColor: "#E482BB",
+                border: "2px solid #C465A9",
+              }}
+              onClick={handleSearch}
+            >
+              Search
+            </Button>
           </div>
+
+          <div className="mt-4 search-results">
+            {videos.map((video) => (
+              <Card
+                key={`${video.id.videoId}-${video.snippet.title}`}
+                className="mb-3"
+                style={{
+                  backgroundColor: "rgba(196, 101, 169, 0.66)",
+                  border: "2px solid #C465A9",
+                }}
+              >
+                <Card.Body>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">{video.snippet.title}</h5>
+                    <Button
+                      size="sm"
+                      onClick={() => handleAddToPlaylist(video)}
+                      style={{
+                        backgroundColor: "#E482BB",
+                        border: "2px solid #C465A9",
+                      }}
+                    >
+                      Add to playlist
+                    </Button>
+                  </div>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        </Col>
+
+        <Col md={6}>
+          <h3 className="mb-3 mt-5">Selected music</h3>
+          <div className="selected-videos">
+            {selectedVideos.length === 0 ? (
+              <p className="text-dark">No videos selected yet</p>
+            ) : (
+              selectedVideos.map((video) => (
+                <Card
+                  key={video.id.videoId}
+                  className="mb-3"
+                  style={{
+                    backgroundColor: "rgba(196, 101, 169, 0.66)",
+                    border: "2px solid #C465A9",
+                  }}
+                >
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="video-title">{video.snippet.title}</div>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() =>
+                          handleRemoveFromPlaylist(video.id.videoId)
+                        }
+                        style={{ backgroundColor: "#C465A9", border: "none" }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))
+            )}
+          </div>
+        </Col>
+      </Row>
+
+      <Row className="mt-5 mb-4">
+        <Col md={4}>
+          <Button
+            className="w-100 py-2"
+            style={{
+              backgroundColor: "#269AC2",
+              color: "white",
+              border: "2px solid #4E66A3",
+            }}
+            onClick={() => setIsRecording(!isRecording)}
+          >
+            {isRecording ? "Stop Recording" : "Start Recording"}
+          </Button>
+        </Col>
+        {audioUrl && (
+          <Col md={8}>
+            <div className="mt-2 mt-md-0">
+              <audio
+                controls
+                className="w-100"
+              >
+                <source
+                  src={audioUrl}
+                  type="audio/mpeg"
+                />
+                Your browser cannot play the audio element.
+              </audio>
+            </div>
+          </Col>
         )}
       </Row>
 
-      <Row className="mt-5">
-        <Button
-          className="w-25"
-          onClick={handleCreatePlaylistWithAudio}
-          disabled={!audioUrl || !playlistName}
-        >
-          Save Playlist
-        </Button>
+      <Row className="mt-5 mb-5">
+        <Col className="text-center">
+          <Button
+            className="px-5 py-2"
+            style={{
+              backgroundColor: "#269AC2",
+              color: "white",
+              border: "2px solid #4E66A3",
+            }}
+            onClick={() => setShowModal(true)}
+            disabled={!audioUrl || !playlistName || selectedVideos.length === 0}
+          >
+            Save Playlist
+          </Button>
+        </Col>
       </Row>
+
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        className="custom-modal"
+      >
+        <Modal.Header>
+          <Modal.Title>Done!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Go to your profile to see the playlist 😎</Modal.Body>
+        <Modal.Footer>
+          <Button
+            style={{ backgroundColor: "#C465A9", border: "2px solid #3DB3CF" }}
+            onClick={() => setShowModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
