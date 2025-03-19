@@ -32,6 +32,30 @@ const DiaryGetter = () => {
       setLoading(false);
     }
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    const day = date.getDate();
+    const month = date.toLocaleString("en-GB", { month: "long" });
+    const year = date.getFullYear();
+
+    // Funzione per aggiungere il suffisso corretto al giorno
+    const getOrdinalSuffix = (day) => {
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    return `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
+  };
 
   useEffect(() => {
     getDiary();
@@ -70,9 +94,16 @@ const DiaryGetter = () => {
         <Col className="d-flex flex-wrap justify-content-around">
           {diary.map((audio) => (
             <div
+              style={{
+                border: "5px solid #9385B6",
+                borderRadius: "25px",
+                backgroundColor: "rgba(147, 133, 182, 0.6)",
+                padding: "20px",
+              }}
               key={audio.id}
               className="my-3"
             >
+              <p>{formatDate(audio.dataRegistrazione)}</p>
               <audio controls>
                 <source
                   src={audio.url}
@@ -80,7 +111,7 @@ const DiaryGetter = () => {
                 />
                 Your browser does not support the audio element.
               </audio>
-              <p>{audio.dataRegistrazione}</p> {/* Formattazione della data */}
+              {/* Formattazione della data */}
             </div>
           ))}
         </Col>

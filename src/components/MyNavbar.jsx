@@ -9,7 +9,7 @@ const MyNavbar = () => {
       className="border border-1 border-dark"
     >
       <Container fluid>
-        <Navbar.Brand href="#home">Capstone</Navbar.Brand>
+        <Navbar.Brand href="/">Capstone</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">

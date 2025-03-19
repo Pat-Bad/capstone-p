@@ -114,13 +114,28 @@ const DiaryEntry = () => {
   };
 
   return (
-    <div>
-      <button onClick={toggleRecording}>
+    <div className="my-3 d-flex align-items-center">
+      <button
+        onClick={toggleRecording}
+        className="custom-btn me-5"
+        style={{
+          width: "200px",
+          height: "50px",
+          padding: "5px",
+        }}
+      >
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
       {audioUrl && (
-        <div>
-          <p>Audio Registrato:</p>
+        <div
+          style={{
+            border: "5px solid #9385B6",
+            borderRadius: "25px",
+            backgroundColor: "rgba(147, 133, 182, 0.6)",
+            padding: "20px",
+          }}
+        >
+          <h4>Today's entry</h4>
           <audio
             controls
             src={audioUrl}
