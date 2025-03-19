@@ -9,7 +9,7 @@ import {
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdModeEdit } from "react-icons/md";
 import PlaylistModifierModal from "../components/PlaylistModifierModal";
-import DeleteConfirmationModal from "../components/DeleteConfirmationModal"; // Import the new modal
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import {
   EmailShareButton,
   WhatsappShareButton,
@@ -23,8 +23,8 @@ const PlaylistGetter = () => {
   const [playStates, setPlayStates] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete modal
-  const [playlistToDelete, setPlaylistToDelete] = useState(null); // Track which playlist to delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [playlistToDelete, setPlaylistToDelete] = useState(null);
   const [videoTitles, setVideoTitles] = useState({});
 
   const token = localStorage.getItem("token");

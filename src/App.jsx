@@ -7,6 +7,7 @@ import MyNavbar from "./components/MyNavbar";
 import ProfilePage from "./pages/ProfilePage";
 import DiaryPage from "./pages/DiaryPage";
 import MyFooter from "./components/MyFooter";
+import ManagerPage from "./pages/ManagerPage";
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
           <Route
             path="/profile"
             element={<ProfilePage />}
+          />
+          <Route
+            path="/manager"
+            element={<ManagerPage />}
           />
         </Routes>
       </main>
