@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Row, Button, Dropdown } from "react-bootstrap";
 import {
   BsFillPlayFill,
   BsPauseFill,
@@ -25,8 +25,10 @@ const PlaylistGetter = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete modal
   const [playlistToDelete, setPlaylistToDelete] = useState(null); // Track which playlist to delete
+  const [videoTitles, setVideoTitles] = useState({});
 
   const token = localStorage.getItem("token");
+  const API_KEY = "AIzaSyBEF92yCCShFYsMInsOI-7QJpnX-XVEJO0";
 
   // Funzione per ottenere le playlist
   const getPlaylists = async () => {
@@ -51,12 +53,22 @@ const PlaylistGetter = () => {
         // Inizializza gli indici correnti e gli stati di play
         const indices = {};
         const initialPlayStates = {};
-        data.forEach((playlist) => {
+        const titles = {};
+        for (const playlist of data) {
           indices[playlist.id] = 0;
           initialPlayStates[playlist.id] = false;
-        });
+
+          for (const url of playlist.youtubeUrls || []) {
+            const videoId = extractVideoId(url);
+            if (videoId) {
+              titles[videoId] = await fetchVideoTitle(videoId);
+            }
+          }
+        }
+
         setCurrentVideoIndices(indices);
         setPlayStates(initialPlayStates);
+        setVideoTitles(titles);
       } else {
         console.error("Errore nel caricamento delle playlist:", data);
       }
@@ -72,6 +84,38 @@ const PlaylistGetter = () => {
   const handleModifyClick = (playlist) => {
     setSelectedPlaylist(playlist);
     setShowModal(true);
+  };
+  useEffect(() => {
+    const fetchTitles = async () => {
+      if (playlists.length === 0) return;
+
+      const titles = {};
+      for (const playlist of playlists) {
+        for (const url of playlist.youtubeUrls || []) {
+          const videoId = extractVideoId(url);
+          if (videoId) {
+            titles[videoId] = await fetchVideoTitle(videoId);
+          }
+        }
+      }
+      setVideoTitles(titles);
+    };
+
+    fetchTitles();
+  }, [playlists]);
+  const fetchVideoTitle = async (videoId) => {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet`
+      );
+      const data = await response.json();
+      return data.items.length > 0
+        ? data.items[0].snippet.title
+        : "Titolo non disponibile";
+    } catch (error) {
+      console.error("Errore nel recupero del titolo:", error);
+      return "Errore nel caricamento";
+    }
   };
 
   // Funzioni di navigazione per video
@@ -209,7 +253,7 @@ const PlaylistGetter = () => {
             >
               <div>
                 <div className="d-flex justify-content-between align-items-center my-2 ">
-                  <h5 className="ps-3">{playlist.nomePlaylist}</h5>
+                  <h4 className="ps-3">{playlist.nomePlaylist}</h4>
                   <div className="d-flex">
                     <Button
                       style={{
@@ -238,7 +282,7 @@ const PlaylistGetter = () => {
                 </div>
 
                 {/* Audio del VocalMemo */}
-                <div>
+                <div className="d-flex justify-content-around">
                   <audio
                     id={`audio-${playlist.id}`}
                     controls
@@ -249,6 +293,31 @@ const PlaylistGetter = () => {
                     />
                     Your browser does not support the audio element.
                   </audio>
+                  <Dropdown>
+                    <Dropdown.Toggle className="custom-btn">
+                      List of songs
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu style={{ backgroundColor: "#E280BB" }}>
+                      {youtubeUrls.length > 0 ? (
+                        youtubeUrls.map((url, index) => {
+                          const videoId = extractVideoId(url);
+                          return (
+                            <Dropdown.Item
+                              key={index}
+                              href={`https://www.youtube.com/watch?v=${videoId}`}
+                              target="_blank"
+                            >
+                              {videoTitles[videoId] || `Video ${index + 1}`}
+                            </Dropdown.Item>
+                          );
+                        })
+                      ) : (
+                        <Dropdown.Item disabled>
+                          No songs available
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </div>
                 {videoId ? (
                   <>
@@ -294,8 +363,7 @@ const PlaylistGetter = () => {
                     {youtubeUrls.length > 1 && (
                       <div className="d-flex my-2 d-flex justify-content-center">
                         <Button
-                          variant="outline-dark"
-                          className="me-2"
+                          className="me-2 custom-btn mt-3"
                           size="sm"
                           onClick={() => handlePrevious(playlist.id)}
                           disabled={currentIndex === 0}
@@ -304,18 +372,16 @@ const PlaylistGetter = () => {
                         </Button>
 
                         <Button
-                          variant="outline-dark"
                           size="sm"
-                          className="me-2"
+                          className="me-2 custom-btn mt-3"
                           onClick={() => togglePlayPause(playlist.id)}
                         >
                           {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
                         </Button>
 
                         <Button
-                          variant="outline-dark"
                           size="sm"
-                          className="me-2"
+                          className="me-2 custom-btn mt-3"
                           onClick={() =>
                             handleNext(playlist.id, youtubeUrls.length - 1)
                           }
@@ -330,7 +396,7 @@ const PlaylistGetter = () => {
                   <p>No video available</p>
                 )}
               </div>
-              <div className="text-end">
+              <div className="text-end pb-2">
                 <EmailShareButton
                   className="px-1"
                   url={`http://localhost:8080/playlist/${playlist.id}`}
@@ -338,7 +404,7 @@ const PlaylistGetter = () => {
                   body={`Hey! Here's a playlist I made: ${playlist.nomePlaylist}. Enjoy!`}
                 >
                   <FaEnvelope
-                    size={20}
+                    size={25}
                     color="white"
                   />
                 </EmailShareButton>
@@ -349,7 +415,7 @@ const PlaylistGetter = () => {
                   title={`Check out this playlist: ${playlist.nomePlaylist}`}
                 >
                   <FaWhatsapp
-                    size={20}
+                    size={25}
                     color="green"
                   />
                 </WhatsappShareButton>
@@ -360,7 +426,7 @@ const PlaylistGetter = () => {
                   quote={`Check out this awesome playlist: ${playlist.nomePlaylist}`}
                 >
                   <FaFacebook
-                    size={20}
+                    size={25}
                     color="blue"
                   />
                 </FacebookShareButton>

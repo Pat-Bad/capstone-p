@@ -4,7 +4,7 @@ import PlaylistGetter from "../components/PlaylistGetter";
 const ProfilePage = () => {
   return (
     <Container>
-      <h3>Ecco le tue playlist</h3>
+      <h2>Your playlists 🎧</h2>
 
       <PlaylistGetter />
     </Container>

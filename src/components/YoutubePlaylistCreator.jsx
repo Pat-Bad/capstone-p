@@ -155,7 +155,7 @@ const YouTubePlaylistCreator = () => {
               onKeyPress={(e) => e.key === "Enter" && handleSearch()} //per cercare anche con invio
             />
             <Button
-              className="px-4"
+              className="px-4 custom-btn"
               style={{
                 backgroundColor: "#E482BB",
                 border: "2px solid #C465A9",

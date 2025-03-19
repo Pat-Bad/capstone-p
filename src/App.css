@@ -55,5 +55,17 @@ footer {
 .custom-modal .modal-footer {
   background-color: #C465A9;
   border-top: none;
-  /* Colore di sfondo personalizzato per il footer */
+
+}
+
+.custom-btn {
+  background-color: #E482BB;
+  border: 2px solid #C465A9;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.custom-btn:hover {
+  background-color: #C465A9;
+  border: 2px solid #E482BB;
+  transform: scale(1.05);
 }
