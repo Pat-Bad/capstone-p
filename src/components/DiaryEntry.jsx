@@ -114,10 +114,10 @@ const DiaryEntry = () => {
   };
 
   return (
-    <div className="my-3 d-flex align-items-center">
+    <div className="my-3 d-flex align-items-center justify-content-center">
       <button
         onClick={toggleRecording}
-        className="custom-btn me-5"
+        className="custom-btn "
         style={{
           width: "200px",
           height: "50px",
@@ -129,6 +129,7 @@ const DiaryEntry = () => {
       {audioUrl && (
         <div
           style={{
+            marginLeft: "20px",
             border: "5px solid #9385B6",
             borderRadius: "25px",
             backgroundColor: "rgba(147, 133, 182, 0.6)",

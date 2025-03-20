@@ -8,6 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import DiaryPage from "./pages/DiaryPage";
 import MyFooter from "./components/MyFooter";
 import ManagerPage from "./pages/ManagerPage";
+import NoPage from "./pages/NoPage";
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
           <Route
             path="/manager"
             element={<ManagerPage />}
+          />
+          <Route
+            path="*"
+            element={<NoPage />}
           />
         </Routes>
       </main>

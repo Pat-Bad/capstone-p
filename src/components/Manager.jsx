@@ -17,15 +17,28 @@ const Manager = () => {
           ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
-      console.log("Tipo di contenuto:", response.headers.get("Content-Type"));
+
+      if (response.status === 500) {
+        throw new Error(
+          "Accesso negato: devi essere un amministratore per vedere il contenuto di questa pagina."
+        );
+      }
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Errore nel caricamento dei membri");
+        const contentType = response.headers.get("Content-Type");
+        let errorMessage = `Errore ${response.status}: ${response.statusText}`;
+
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          errorMessage = data.message || "Errore nel caricamento dei membri";
+        } else {
+          errorMessage = await response.text(); // Legge l'errore come testo
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      console.log(data);
-
       setMembers(data);
     } catch (error) {
       setError(error.message);
@@ -33,6 +46,7 @@ const Manager = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     getMembers();
   }, []);
@@ -40,13 +54,20 @@ const Manager = () => {
   return (
     <div
       style={{ overflowX: "auto", maxWidth: "50%" }}
-      className="mx-auto text-center"
+      className="text-center mx-auto"
     >
       {/* Mostra un messaggio di caricamento mentre i membri sono in fase di recupero */}
       {loading && <p>Loading...</p>}
 
       {/* Mostra un messaggio di errore se c'è un problema nella fetch */}
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {error && (
+        <div
+          className="alert alert-danger"
+          role="alert"
+        >
+          {error}
+        </div>
+      )}
 
       {/* Renderizza i membri solo se ci sono */}
       {members.length > 0 ? (
@@ -97,7 +118,7 @@ const Manager = () => {
           </tbody>
         </Table>
       ) : (
-        <p>No members to display.</p>
+        <p>Nothing to see here.</p>
       )}
     </div>
   );

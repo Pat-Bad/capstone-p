@@ -3,7 +3,7 @@ import { Button, Col, Container, Modal, Row, Card } from "react-bootstrap";
 
 // Funzione per cercare i video su YouTube
 const searchYouTube = async (query) => {
-  const apiKey = "AIzaSyBEF92yCCShFYsMInsOI-7QJpnX-XVEJO0";
+  const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
   const response = await fetch(
     `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${apiKey}`
   );
@@ -124,7 +124,7 @@ const YouTubePlaylistCreator = () => {
   };
 
   return (
-    <Container className="pt-5 pt-md-4 pt-lg-5 mt-2 mt-md-3">
+    <Container className="mt-2 mt-md-3 pt-5 pt-lg-5 pt-md-4">
       <Row className="mt-3">
         <Col md={6}>
           <h3 className="mb-3">Create a new playlist</h3>
@@ -155,7 +155,7 @@ const YouTubePlaylistCreator = () => {
               onKeyPress={(e) => e.key === "Enter" && handleSearch()} //per cercare anche con invio
             />
             <Button
-              className="px-4 custom-btn"
+              className="custom-btn px-4"
               style={{
                 backgroundColor: "#E482BB",
                 border: "2px solid #C465A9",
@@ -177,7 +177,7 @@ const YouTubePlaylistCreator = () => {
                 }}
               >
                 <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center justify-content-between">
                     <h5 className="mb-0">{video.snippet.title}</h5>
                     <Button
                       size="sm"
@@ -212,7 +212,7 @@ const YouTubePlaylistCreator = () => {
                   }}
                 >
                   <Card.Body>
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center justify-content-between">
                       <div className="video-title">{video.snippet.title}</div>
                       <Button
                         size="sm"
@@ -233,7 +233,7 @@ const YouTubePlaylistCreator = () => {
         </Col>
       </Row>
 
-      <Row className="mt-5 mb-4">
+      <Row className="mb-4 mt-3">
         <Col md={4}>
           <Button
             className="w-100 py-2"
@@ -265,7 +265,7 @@ const YouTubePlaylistCreator = () => {
         )}
       </Row>
 
-      <Row className="mt-5 mb-5">
+      <Row className="mb-5 mt-5">
         <Col className="text-center">
           <Button
             className="px-5 py-2"

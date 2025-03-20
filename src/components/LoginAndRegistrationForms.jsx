@@ -71,7 +71,7 @@ const LoginAndRegistrationForms = () => {
   return (
     <div className="container">
       <div className="row g-3 justify-content-center">
-        <div class="col-md-5 p-4 ">
+        <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
           <Form onSubmit={handleRegisterSubmit}>
             <span className="d-flex">
@@ -127,7 +127,7 @@ const LoginAndRegistrationForms = () => {
           </Form>
         </div>
 
-        <div class="col-md-5 p-4">
+        <div className="col-md-5 p-4">
           <h2 className="mb-3">Login</h2>
           <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3 w-75">

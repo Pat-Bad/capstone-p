@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row, Spinner, Alert } from "react-bootstrap";
+import AudioPlayer from "./AudioPlayer";
 
 const DiaryGetter = () => {
   const [diary, setDiary] = useState([]);
@@ -25,7 +26,12 @@ const DiaryGetter = () => {
         );
       }
       const data = await response.json();
-      setDiary(data);
+      console.log("Dati ricevuti:", data);
+      const sortedData = [...data].sort(
+        (a, b) => new Date(a.dataRegistrazione) - new Date(b.dataRegistrazione)
+      );
+
+      setDiary([...sortedData]);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -93,26 +99,11 @@ const DiaryGetter = () => {
       <Row>
         <Col className="d-flex flex-wrap justify-content-around">
           {diary.map((audio) => (
-            <div
-              style={{
-                border: "5px solid #9385B6",
-                borderRadius: "25px",
-                backgroundColor: "rgba(147, 133, 182, 0.6)",
-                padding: "20px",
-              }}
+            <AudioPlayer
               key={audio.id}
-              className="my-3"
-            >
-              <p>{formatDate(audio.dataRegistrazione)}</p>
-              <audio controls>
-                <source
-                  src={audio.url}
-                  type="audio/mpeg"
-                />
-                Your browser does not support the audio element.
-              </audio>
-              {/* Formattazione della data */}
-            </div>
+              src={audio.url}
+              date={formatDate(audio.dataRegistrazione)}
+            />
           ))}
         </Col>
       </Row>

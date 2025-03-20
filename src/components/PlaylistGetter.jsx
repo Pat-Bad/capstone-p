@@ -28,7 +28,7 @@ const PlaylistGetter = () => {
   const [videoTitles, setVideoTitles] = useState({});
 
   const token = localStorage.getItem("token");
-  const API_KEY = "AIzaSyBEF92yCCShFYsMInsOI-7QJpnX-XVEJO0";
+  const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 
   // Funzione per ottenere le playlist
   const getPlaylists = async () => {
