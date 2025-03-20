@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Modal, Row, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-// Funzione per cercare i video su YouTube
+//funzione di ricerca su yt api
 const searchYouTube = async (query) => {
   const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
   const response = await fetch(
@@ -23,7 +24,7 @@ const YouTubePlaylistCreator = () => {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // Avvio e stop della registrazione del memo vocale
+  // memo vocale
   useEffect(() => {
     if (isRecording) {
       navigator.mediaDevices
@@ -103,7 +104,7 @@ const YouTubePlaylistCreator = () => {
     }
   };
 
-  // Funzione per cercare i video YouTube
+  // Funzione per caricare i risultati di ricerca
   const handleSearch = async () => {
     if (searchQuery) {
       const result = await searchYouTube(searchQuery);
@@ -290,7 +291,17 @@ const YouTubePlaylistCreator = () => {
         <Modal.Header>
           <Modal.Title>Done!</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Go to your profile to see the playlist 😎</Modal.Body>
+        <Modal.Body>
+          Go to your profile to see the playlist 😎
+          <Link
+            style={{ textDecoration: "none" }}
+            to={`/profile`}
+            className="btn btn-link"
+          >
+            {" "}
+            Let's go! 🔥{" "}
+          </Link>
+        </Modal.Body>
         <Modal.Footer>
           <Button
             style={{ backgroundColor: "#C465A9", border: "2px solid #3DB3CF" }}

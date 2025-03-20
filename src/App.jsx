@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import LoginAndRegistrationForms from "./components/LoginAndRegistrationForms";
-import AudioRecorder from "./components/AudioRecorder";
+
 import YouTubePlaylistCreator from "./components/YoutubePlaylistCreator";
 import MyNavbar from "./components/MyNavbar";
 import ProfilePage from "./pages/ProfilePage";
@@ -26,10 +26,7 @@ function App() {
             path="/"
             element={<LoginAndRegistrationForms />}
           />
-          <Route
-            path="/audiorecorder"
-            element={<AudioRecorder />}
-          />
+
           <Route
             path="/diary"
             element={<DiaryPage />}

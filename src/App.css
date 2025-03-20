@@ -15,11 +15,9 @@ body {
 
 body {
   min-height: 100vh;
-  /* Assicurati che il corpo prenda almeno tutta l'altezza della finestra */
   display: flex;
   flex-direction: column;
 }
-
 
 #root {
   width: 100%;
@@ -33,47 +31,44 @@ header {
   right: 0;
   width: 100%;
   z-index: 1050;
-  background-color: #3DB3CF;
-
+  background-color: #3db3cf;
 }
 
-
 footer {
-  background-color: #3BB2CB;
+  background-color: #3bb2cb;
 }
 
 .custom-modal .modal-content {
-  background-color: #C465A9 !important;
+  background-color: #c465a9 !important;
   /* Colore di sfondo personalizzato */
   margin-bottom: 10px;
   padding: 10px;
-  border: 5px solid #3DB3CF !important;
+  border: 5px solid #3db3cf !important;
   border-radius: 25px;
   color: white;
   border: none;
 }
 
 .custom-modal .modal-header {
-  background-color: #C465A9;
+  background-color: #c465a9;
   /* Colore di sfondo personalizzato per l'intestazione */
   color: white;
   border-bottom: none;
 }
 
 .custom-modal .modal-footer {
-  background-color: #C465A9;
+  background-color: #c465a9;
   border-top: none;
-
 }
 
 .custom-btn {
-  background-color: #E482BB;
-  border: 2px solid #C465A9;
+  background-color: #e482bb;
+  border: 2px solid #c465a9;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .custom-btn:hover {
-  background-color: #C465A9;
-  border: 2px solid #E482BB;
+  background-color: #c465a9;
+  border: 2px solid #e482bb;
   transform: scale(1.05);
 }
