@@ -96,16 +96,28 @@ const DiaryGetter = () => {
 
   return (
     <Container fluid>
-      <Row>
-        <Col className="d-flex flex-wrap justify-content-around">
-          {diary.map((audio) => (
-            <AudioPlayer
-              key={audio.id}
-              src={audio.url}
-              date={formatDate(audio.dataRegistrazione)}
-            />
-          ))}
-        </Col>
+      <Row className="justify-content-center">
+        {diary.map((audio) => (
+          <Col
+            key={audio.id}
+            md={3}
+            className="d-flex justify-content-center"
+          >
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "400px", // Massima larghezza per non allargare troppo
+
+                textAlign: "center",
+              }}
+            >
+              <AudioPlayer
+                src={audio.url}
+                date={formatDate(audio.dataRegistrazione)}
+              />
+            </div>
+          </Col>
+        ))}
       </Row>
     </Container>
   );

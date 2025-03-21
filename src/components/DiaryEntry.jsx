@@ -133,7 +133,7 @@ const DiaryEntry = () => {
             border: "5px solid #9385B6",
             borderRadius: "25px",
             backgroundColor: "rgba(147, 133, 182, 0.6)",
-            padding: "20px",
+            padding: "50px",
           }}
         >
           <h4>Today's entry</h4>
