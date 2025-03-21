@@ -41,6 +41,7 @@ const PlaylistGetter = () => {
             "Content-Type": "application/json",
             ...(token && { Authorization: `Bearer ${token}` }),
           },
+          credentials: "include",
         }
       );
 
