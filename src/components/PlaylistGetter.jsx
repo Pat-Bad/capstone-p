@@ -34,7 +34,7 @@ const PlaylistGetter = () => {
   const getPlaylists = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/playlist/with-audio",
+        "patprojects-1c802b2b.koyeb.app/api/playlist/with-audio",
         {
           method: "GET",
           headers: {
@@ -178,7 +178,7 @@ const PlaylistGetter = () => {
   const confirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/playlist/${playlistToDelete}`,
+        `patprojects-1c802b2b.koyeb.app/api/playlist/${playlistToDelete}`,
         {
           method: "DELETE",
           headers: {
@@ -399,7 +399,7 @@ const PlaylistGetter = () => {
               <div className="text-end pb-2">
                 <EmailShareButton
                   className="px-1"
-                  url={`http://localhost:8080/playlist/${playlist.id}`}
+                  url={`patprojects-1c802b2b.koyeb.app/playlist/${playlist.id}`}
                   subject={`Check out my playlist: ${playlist.nomePlaylist}`}
                   body={`Hey! Here's a playlist I made: ${playlist.nomePlaylist}. Enjoy!`}
                 >
@@ -411,7 +411,7 @@ const PlaylistGetter = () => {
 
                 <WhatsappShareButton
                   className="px-1"
-                  url={`http://localhost:8080/playlist/${playlist.id}`}
+                  url={`patprojects-1c802b2b.koyeb.app/playlist/${playlist.id}`}
                   title={`Check out this playlist: ${playlist.nomePlaylist}`}
                 >
                   <FaWhatsapp
@@ -422,7 +422,7 @@ const PlaylistGetter = () => {
 
                 <FacebookShareButton
                   className="px-1"
-                  url={`http://localhost:8080/playlist/${playlist.id}`}
+                  url={`patprojects-1c802b2b.koyeb.app/playlist/${playlist.id}`}
                   quote={`Check out this awesome playlist: ${playlist.nomePlaylist}`}
                 >
                   <FaFacebook

@@ -10,13 +10,16 @@ const Manager = () => {
   const getMembers = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/api/auth/members", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
+      const response = await fetch(
+        "patprojects-1c802b2b.koyeb.app/api/auth/members",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
 
       if (response.status === 500) {
         throw new Error(

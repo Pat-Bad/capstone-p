@@ -79,7 +79,7 @@ const YouTubePlaylistCreator = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/playlist/with-audio", //endpoint con cloudinary e db
+        "patprojects-1c802b2b.koyeb.app/api/playlist/with-audio", //endpoint con cloudinary e db
         {
           method: "POST",
           headers: {

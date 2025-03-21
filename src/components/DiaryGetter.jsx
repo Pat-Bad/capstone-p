@@ -11,7 +11,7 @@ const DiaryGetter = () => {
   const getDiary = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/vocalmemo/diary-entries",
+        "patprojects-1c802b2b.koyeb.app/api/vocalmemo/diary-entries",
         {
           method: "GET",
           headers: {

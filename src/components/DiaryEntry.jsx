@@ -56,7 +56,7 @@ const DiaryEntry = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/vocalmemo/upload-diary",
+        "patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
         {
           method: "POST",
           body: formData,
@@ -90,7 +90,7 @@ const DiaryEntry = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/vocalmemo/upload-diary",
+        "patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
         {
           method: "POST",
           body: formData,

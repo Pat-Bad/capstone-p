@@ -26,7 +26,7 @@ const LoginAndRegistrationForms = () => {
     e.preventDefault();
     setLoading(true);
 
-    fetch("http://localhost:8080/api/auth/register", {
+    fetch("https://patprojects-1c802b2b.koyeb.app/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,14 +40,13 @@ const LoginAndRegistrationForms = () => {
         setLoading(false);
       })
       .catch((error) => console.error("Error during registration:", error));
-    setLoading(false);
   };
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    fetch("http://localhost:8080/api/auth/login", {
+    fetch("https://patprojects-1c802b2b.koyeb.app/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

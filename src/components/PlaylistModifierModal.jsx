@@ -100,7 +100,7 @@ const PlaylistModifierModal = ({
   const saveChanges = async () => {
     for (let videoUrl of videosToRemove) {
       await fetch(
-        `http://localhost:8080/api/playlist/${playlist.id}/modify-video`,
+        `patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
           headers: {
@@ -118,7 +118,7 @@ const PlaylistModifierModal = ({
 
     for (let video of newVideos) {
       await fetch(
-        `http://localhost:8080/api/playlist/${playlist.id}/modify-video`,
+        `patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
           headers: {
