@@ -78,18 +78,16 @@ const YouTubePlaylistCreator = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const apiUrl = new URL(
-        "/api/playlist/with-audio",
-        "https://patprojects-1c802b2b.koyeb.app"
-      ).href;
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "https://patprojects-1c802b2b.koyeb.app/api/playlist/with-audio", //endpoint con cloudinary e db
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const playlistData = await response.json();
