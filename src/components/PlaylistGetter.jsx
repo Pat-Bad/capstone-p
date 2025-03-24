@@ -343,22 +343,6 @@ const PlaylistGetter = () => {
                           handleVideoEnd(playlist.id, youtubeUrls.length - 1)
                         }
                       ></iframe>
-
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "10px",
-                          right: "10px",
-                          background: "rgba(0, 0, 0, 0.7)",
-                          color: "white",
-                          padding: "5px 10px",
-                          borderRadius: "4px",
-                          zIndex: 1000,
-                          fontSize: "14px",
-                        }}
-                      >
-                        {currentIndex + 1} / {youtubeUrls.length}
-                      </div>
                     </div>
 
                     {youtubeUrls.length > 1 && (
