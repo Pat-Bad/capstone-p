@@ -328,8 +328,8 @@ const PlaylistGetter = () => {
                           position: "absolute",
                           top: 0,
                           left: 0,
-                          width: "1%",
-                          height: "1%",
+                          width: "10%",
+                          height: "10%",
                           border: "none",
                         }}
                         src={`https://www.youtube.com/embed/${videoId}?autoplay=${
