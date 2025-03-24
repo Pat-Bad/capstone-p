@@ -28,7 +28,7 @@ const DiaryGetter = () => {
       const data = await response.json();
       console.log("Dati ricevuti:", data);
       const sortedData = [...data].sort(
-        (a, b) => new Date(a.dataRegistrazione) - new Date(b.dataRegistrazione)
+        (a, b) => new Date(b.dataRegistrazione) - new Date(a.dataRegistrazione)
       );
 
       setDiary([...sortedData]);
