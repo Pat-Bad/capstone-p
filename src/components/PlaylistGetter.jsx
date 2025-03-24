@@ -348,7 +348,7 @@ const PlaylistGetter = () => {
                     {youtubeUrls.length > 1 && (
                       <div className="d-flex my-2 d-flex justify-content-center">
                         <Button
-                          className="me-2 custom-btn mt-3"
+                          className="me-2 custom-btn"
                           size="sm"
                           onClick={() => handlePrevious(playlist.id)}
                           disabled={currentIndex === 0}
@@ -358,7 +358,7 @@ const PlaylistGetter = () => {
 
                         <Button
                           size="sm"
-                          className="me-2 custom-btn mt-3"
+                          className="me-2 custom-btn"
                           onClick={() => togglePlayPause(playlist.id)}
                         >
                           {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
@@ -366,7 +366,7 @@ const PlaylistGetter = () => {
 
                         <Button
                           size="sm"
-                          className="me-2 custom-btn mt-3"
+                          className="me-2 custom-btn"
                           onClick={() =>
                             handleNext(playlist.id, youtubeUrls.length - 1)
                           }
