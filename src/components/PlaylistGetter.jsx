@@ -322,13 +322,13 @@ const PlaylistGetter = () => {
                 </div>
                 {videoId ? (
                   <>
-                    <div>
+                    <div style={{ position: "relative" }}>
                       <iframe
                         style={{
                           position: "absolute",
                           top: 0,
                           left: 0,
-                          width: "10%",
+                          width: "1%",
                           height: "10%",
                           border: "none",
                         }}
