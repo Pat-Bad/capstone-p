@@ -56,7 +56,7 @@ const DiaryEntry = () => {
 
     try {
       const response = await fetch(
-        "patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
+        "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
         {
           method: "POST",
           body: formData,
