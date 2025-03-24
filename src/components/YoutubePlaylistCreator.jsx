@@ -125,7 +125,7 @@ const YouTubePlaylistCreator = () => {
   };
 
   return (
-    <Container className="mt-2 mt-md-3 pt-5 pt-lg-5 pt-md-4">
+    <Container className="mt-2 mt-md-3 pt-md-5 pt-lg-5 pt-md-4">
       <Row className="mt-3">
         <Col md={6}>
           <h3 className="mb-3">Create a new playlist</h3>
