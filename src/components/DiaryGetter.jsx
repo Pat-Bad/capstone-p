@@ -30,8 +30,9 @@ const DiaryGetter = () => {
       const sortedData = [...data].sort(
         (a, b) => new Date(b.dataRegistrazione) - new Date(a.dataRegistrazione)
       );
+      const reversedData = sortedData.reverse();
 
-      setDiary([...sortedData]);
+      setDiary(reversedData);
     } catch (error) {
       setError(error.message);
     } finally {
