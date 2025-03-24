@@ -100,7 +100,7 @@ const DiaryGetter = () => {
         {diary.map((audio) => (
           <Col
             key={audio.id}
-            md={3}
+            md={6}
             className="d-flex justify-content-center"
           >
             <div
