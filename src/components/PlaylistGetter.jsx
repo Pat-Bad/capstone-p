@@ -345,7 +345,7 @@ const PlaylistGetter = () => {
                       ></iframe>
                     </div>
 
-                    <div className="d-flex my-2 d-flex justify-content-center">
+                    <div className="d-flex my-2 d-flex justify-content-center mt-2">
                       <Button
                         className="me-2 custom-btn"
                         size="sm"
