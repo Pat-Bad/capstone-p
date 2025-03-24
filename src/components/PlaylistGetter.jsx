@@ -345,74 +345,41 @@ const PlaylistGetter = () => {
                       ></iframe>
                     </div>
 
-                    {youtubeUrls.length > 1 && (
-                      <div className="d-flex my-2 d-flex justify-content-center">
-                        <Button
-                          className="me-2 custom-btn"
-                          size="sm"
-                          onClick={() => handlePrevious(playlist.id)}
-                          disabled={currentIndex === 0}
-                        >
-                          <BsRewindFill />
-                        </Button>
+                    <div className="d-flex my-2 d-flex justify-content-center">
+                      <Button
+                        className="me-2 custom-btn"
+                        size="sm"
+                        onClick={() => handlePrevious(playlist.id)}
+                        disabled={currentIndex === 0}
+                      >
+                        <BsRewindFill />
+                      </Button>
 
-                        <Button
-                          size="sm"
-                          className="me-2 custom-btn"
-                          onClick={() => togglePlayPause(playlist.id)}
-                        >
-                          {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
-                        </Button>
+                      <Button
+                        size="sm"
+                        className="me-2 custom-btn"
+                        onClick={() => togglePlayPause(playlist.id)}
+                      >
+                        {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
+                      </Button>
 
-                        <Button
-                          size="sm"
-                          className="me-2 custom-btn"
-                          onClick={() =>
-                            handleNext(playlist.id, youtubeUrls.length - 1)
-                          }
-                          disabled={currentIndex === youtubeUrls.length - 1}
-                        >
-                          <BsFastForwardFill />
-                        </Button>
-                      </div>
-                    )}
+                      <Button
+                        size="sm"
+                        className="me-2 custom-btn"
+                        onClick={() =>
+                          handleNext(playlist.id, youtubeUrls.length - 1)
+                        }
+                        disabled={currentIndex === youtubeUrls.length - 1}
+                      >
+                        <BsFastForwardFill />
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <p>No video available</p>
                 )}
               </div>
               <div className="text-end pb-2">
-                {youtubeUrls.length > 1 && (
-                  <div className="d-flex my-2 d-flex justify-content-center">
-                    <Button
-                      className="me-2 custom-btn"
-                      size="sm"
-                      onClick={() => handlePrevious(playlist.id)}
-                      disabled={currentIndex === 0}
-                    >
-                      <BsRewindFill />
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      className="me-2 custom-btn"
-                      onClick={() => togglePlayPause(playlist.id)}
-                    >
-                      {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      className="me-2 custom-btn"
-                      onClick={() =>
-                        handleNext(playlist.id, youtubeUrls.length - 1)
-                      }
-                      disabled={currentIndex === youtubeUrls.length - 1}
-                    >
-                      <BsFastForwardFill />
-                    </Button>
-                  </div>
-                )}
                 <EmailShareButton
                   className="px-1"
                   url={`https://patprojects-1c802b2b.koyeb.app/playlist/${playlist.id}`}
