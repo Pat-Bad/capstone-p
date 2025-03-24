@@ -329,7 +329,7 @@ const PlaylistGetter = () => {
                           top: 0,
                           left: 0,
                           width: "1%",
-                          height: "10%",
+                          height: "1%",
                           border: "none",
                         }}
                         src={`https://www.youtube.com/embed/${videoId}?autoplay=${
@@ -382,6 +382,37 @@ const PlaylistGetter = () => {
                 )}
               </div>
               <div className="text-end pb-2">
+                {youtubeUrls.length > 1 && (
+                  <div className="d-flex my-2 d-flex justify-content-center">
+                    <Button
+                      className="me-2 custom-btn"
+                      size="sm"
+                      onClick={() => handlePrevious(playlist.id)}
+                      disabled={currentIndex === 0}
+                    >
+                      <BsRewindFill />
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      className="me-2 custom-btn"
+                      onClick={() => togglePlayPause(playlist.id)}
+                    >
+                      {isPlaying ? <BsPauseFill /> : <BsFillPlayFill />}
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      className="me-2 custom-btn"
+                      onClick={() =>
+                        handleNext(playlist.id, youtubeUrls.length - 1)
+                      }
+                      disabled={currentIndex === youtubeUrls.length - 1}
+                    >
+                      <BsFastForwardFill />
+                    </Button>
+                  </div>
+                )}
                 <EmailShareButton
                   className="px-1"
                   url={`https://patprojects-1c802b2b.koyeb.app/playlist/${playlist.id}`}
