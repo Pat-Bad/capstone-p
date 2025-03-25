@@ -71,7 +71,7 @@ const DiaryGetter = () => {
     <Container fluid>
       <Row className="justify-content-center">
         {loading && (
-          <Col className="d-flex justify-content-center">
+          <Col className="d-flex justify-content-center mt-5">
             <Spinner
               animation="border"
               variant="primary"
