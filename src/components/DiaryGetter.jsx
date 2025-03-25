@@ -70,6 +70,21 @@ const DiaryGetter = () => {
   return (
     <Container fluid>
       <Row className="justify-content-center">
+        {loading && (
+          <Spinner
+            animation="border"
+            variant="primary"
+          />
+        )}
+        {error && (
+          <Alert
+            variant="danger"
+            onClose={() => setError(false)}
+            dismissible
+          >
+            Whoops, something went wrong. Please try again.
+          </Alert>
+        )}
         {diary.map((audio) => (
           <Col
             key={audio.id}
@@ -91,21 +106,6 @@ const DiaryGetter = () => {
             </div>
           </Col>
         ))}
-        {loading && (
-          <Spinner
-            animation="border"
-            variant="primary"
-          />
-        )}
-        {error && (
-          <Alert
-            variant="danger"
-            onClose={() => setError(false)}
-            dismissible
-          >
-            Whoops, something went wrong. Please try again.
-          </Alert>
-        )}
       </Row>
     </Container>
   );
