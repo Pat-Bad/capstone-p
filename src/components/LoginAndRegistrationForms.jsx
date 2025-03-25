@@ -194,7 +194,7 @@ const LoginAndRegistrationForms = () => {
             <Spinner
               animation="border"
               style={{
-                border: "5px solid #5FA2C5",
+                borderColor: "#5FA2C5",
                 borderRadius: "50%",
                 width: "50px",
                 height: "50px",
