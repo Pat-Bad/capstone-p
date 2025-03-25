@@ -68,17 +68,48 @@ const LoginAndRegistrationForms = () => {
         navigate("/playlist");
         setLoading(false);
       })
-      .catch(
-        (error) => console.error("Error during login:", error),
-        setErrorAlert(true)
-      );
+      .catch((error) => {
+        console.error("Error during login:", error), setErrorAlert(true);
+      })
 
-    setLoading(false);
+      .finally(() => setLoading(false));
   };
 
   return (
     <div className="container">
       <div className="row g-3 justify-content-center">
+        {errorAlert && (
+          <Alert
+            variant="danger"
+            onClose={() => setErrorAlert(false)}
+            dismissible
+          >
+            Whoops, something went wrong. Please try again.
+          </Alert>
+        )}
+        {showAlert && (
+          <Alert
+            variant="light"
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
+            Registration successful! Check your inbox 🖖
+          </Alert>
+        )}
+        {loading && (
+          <div className="d-flex justify-content-center">
+            <Spinner
+              animation="border"
+              style={{
+                backgroundColor: "#269BC6",
+                border: "2px solidrgb(7, 8, 8)",
+                borderRadius: "50%",
+                width: "50px",
+                height: "50px",
+              }}
+            />
+          </div>
+        )}
         <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
 
