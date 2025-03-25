@@ -138,29 +138,6 @@ const LoginAndRegistrationForms = () => {
 
         <div className="col-md-5 p-4">
           <h2 className="mb-3">Login</h2>
-          {errorAlert && (
-            <Alert
-              variant="danger"
-              onClose={() => setErrorAlert(false)}
-              dismissible
-            >
-              Whoops, something went wrong. Please try again.
-            </Alert>
-          )}
-          {loading && (
-            <div className="d-flex justify-content-center">
-              <Spinner
-                animation="border"
-                style={{
-                  backgroundColor: "#269BC6",
-                  border: "2px solidrgb(7, 8, 8)",
-                  borderRadius: "50%",
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
-            </div>
-          )}
 
           <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3 w-75">
