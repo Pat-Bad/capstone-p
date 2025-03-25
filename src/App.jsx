@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import LoginAndRegistrationForms from "./components/LoginAndRegistrationForms";
-
 import YouTubePlaylistCreator from "./components/YoutubePlaylistCreator";
 import MyNavbar from "./components/MyNavbar";
 import ProfilePage from "./pages/ProfilePage";

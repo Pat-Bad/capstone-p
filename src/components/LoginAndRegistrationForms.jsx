@@ -80,7 +80,6 @@ const LoginAndRegistrationForms = () => {
       <div className="row g-3 justify-content-center">
         <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
-
           <Form onSubmit={handleRegisterSubmit}>
             <span className="d-flex">
               <Form.Group className="mb-3 w-50">
@@ -130,7 +129,6 @@ const LoginAndRegistrationForms = () => {
 
         <div className="col-md-5 p-4">
           <h2 className="mb-3">Login</h2>
-
           <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3 w-75">
               <Form.Label>Username</Form.Label>

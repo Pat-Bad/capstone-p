@@ -13,6 +13,8 @@ const searchYouTube = async (query) => {
 };
 
 const YouTubePlaylistCreator = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // Query di ricerca
   const [videos, setVideos] = useState([]); // Lista dei video trovati
   const [selectedVideos, setSelectedVideos] = useState([]); // Video selezionati per la playlist
@@ -76,7 +78,7 @@ const YouTubePlaylistCreator = () => {
     );
 
     const token = localStorage.getItem("token");
-
+    setLoading(true);
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/playlist/with-audio", //endpoint con cloudinary e db
@@ -91,17 +93,19 @@ const YouTubePlaylistCreator = () => {
 
       if (response.ok) {
         const playlistData = await response.json();
-        console.log(playlistData);
-        setPlaylistId(playlistData.id);
 
-        console.log("Playlist creata con successo", playlistData);
+        setPlaylistId(playlistData.id);
+        setLoading(false);
       } else {
         const errorData = await response.json();
-        console.error("Errore nella creazione della playlist:", errorData);
+        setError(true);
+        console.log(errorData);
       }
     } catch (error) {
-      console.error("Errore durante la creazione della playlist:", error);
+      setError(true);
+      console.log(error);
     }
+    setLoading(false);
   };
 
   // Funzione per caricare i risultati di ricerca
@@ -153,7 +157,7 @@ const YouTubePlaylistCreator = () => {
               placeholder="Search for music..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()} //per cercare anche con invio
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()} //per cercare anche con invio
             />
             <Button
               className="custom-btn px-4"
@@ -296,7 +300,7 @@ const YouTubePlaylistCreator = () => {
           <Link
             style={{ textDecoration: "none" }}
             to={`/profile`}
-            className="btn btn-link"
+            className="btn"
           >
             {" "}
             Let's go! 🔥{" "}

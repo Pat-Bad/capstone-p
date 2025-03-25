@@ -12,9 +12,11 @@ const PlaylistModifierModal = ({
   const [videosToRemove, setVideosToRemove] = useState(new Set());
   const [newVideos, setNewVideos] = useState([]);
   const [videoTitles, setVideoTitles] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const token = localStorage.getItem("token");
-  const apiKey = "AIzaSyBEF92yCCShFYsMInsOI-7QJpnX-XVEJO0";
+  const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
   useEffect(() => {
     if (show && playlist.youtubeUrls.length > 0) {
@@ -22,11 +24,10 @@ const PlaylistModifierModal = ({
     }
   }, [show, playlist.youtubeUrls]);
 
-  // Recupera i titoli dei video esistenti nella playlist
   const fetchVideoTitles = async () => {
     const videoIds = playlist.youtubeUrls
       .map((url) => extractVideoId(url))
-      .filter(Boolean);
+      .filter(Boolean); //per togliere null, undefined e false dall array di risultati
 
     if (videoIds.length === 0) return;
 
@@ -55,6 +56,7 @@ const PlaylistModifierModal = ({
   // Ricerca video su YouTube
   const searchYouTube = async () => {
     if (!searchQuery.trim()) return;
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -73,14 +75,19 @@ const PlaylistModifierModal = ({
           }))
         );
       } else {
-        console.error("Errore nella ricerca su YouTube", data);
+        console.error("Error in searching YouTube", data);
+        setError(true);
       }
     } catch (error) {
-      console.error("Errore nella chiamata all'API di YouTube", error);
+      console.error("Error in searching YouTube", error);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Aggiunge video alla lista temporanea
+  //controlla che non ci sia gia il video nella playlist
+  //uso some() sull'array per controllare. Torna true se il video esiste, false altrimenti
   const addVideoToPlaylist = (video) => {
     if (!newVideos.some((v) => v.url === video.url)) {
       setNewVideos([...newVideos, video]);
@@ -99,6 +106,8 @@ const PlaylistModifierModal = ({
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
     for (let videoUrl of videosToRemove) {
+      setLoading(true);
+
       await fetch(
         `patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
@@ -114,9 +123,12 @@ const PlaylistModifierModal = ({
           }),
         }
       );
+      setLoading(false);
     }
 
     for (let video of newVideos) {
+      setLoading(true);
+
       await fetch(
         `patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
@@ -132,14 +144,14 @@ const PlaylistModifierModal = ({
           }),
         }
       );
+      setLoading(false);
     }
 
-    updatePlaylist(); // Aggiorna le playlist
+    updatePlaylist();
     handleClose();
     window.location.reload(); // Ricarica la pagina per vedere le modifiche
   };
 
-  // Estrai ID video da un URL di YouTube
   const extractVideoId = (url) => {
     const match = url.match(
       /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i
@@ -157,10 +169,9 @@ const PlaylistModifierModal = ({
         <Modal.Title>Modifica Playlist</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/* Ricerca video */}
         <Form.Control
           type="text"
-          placeholder="Cerca su YouTube"
+          placeholder="Search on YouTube"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -168,10 +179,9 @@ const PlaylistModifierModal = ({
           className="mt-2"
           onClick={searchYouTube}
         >
-          Cerca
+          Search
         </Button>
 
-        {/* Risultati della ricerca */}
         <ListGroup className="mt-3">
           {searchResults.map((video) => (
             <ListGroup.Item key={video.id}>
@@ -183,7 +193,6 @@ const PlaylistModifierModal = ({
                 />
                 <div>
                   <h6>{video.title}</h6>
-                  <p>{video.description.slice(0, 100)}...</p>
                 </div>
                 <Button
                   variant="success"
@@ -191,14 +200,14 @@ const PlaylistModifierModal = ({
                   className="ms-2"
                   onClick={() => addVideoToPlaylist(video)}
                 >
-                  Aggiungi
+                  Add
                 </Button>
               </div>
             </ListGroup.Item>
           ))}
         </ListGroup>
 
-        {/* Video aggiunti recentemente */}
+        {/* Video da aggiungere, mostro solo se ne è selezionato almeno 1 */}
         {newVideos.length > 0 && (
           <>
             <h6 className="mt-4">Video da aggiungere</h6>
@@ -224,7 +233,7 @@ const PlaylistModifierModal = ({
         )}
 
         {/* Video esistenti nella playlist */}
-        <h6 className="mt-4">Video nella playlist</h6>
+        <h6 className="mt-4">Already in your playlist 🔥</h6>
         <ListGroup>
           {playlist.youtubeUrls.map((url, index) => {
             const videoId = extractVideoId(url);
@@ -240,10 +249,10 @@ const PlaylistModifierModal = ({
                       marginRight: "10px",
                     }}
                   />
-                  <h6>{videoTitles[videoId] || "Caricamento..."}</h6>
+                  <h6>{videoTitles[videoId]}</h6>
                   <Form.Check
                     type="checkbox"
-                    label="Rimuovi"
+                    label="remove"
                     onChange={() => toggleVideoRemoval(url)}
                   />
                 </div>
@@ -257,13 +266,13 @@ const PlaylistModifierModal = ({
           variant="secondary"
           onClick={handleClose}
         >
-          Chiudi
+          Close
         </Button>
         <Button
           variant="primary"
           onClick={saveChanges}
         >
-          Salva
+          Save
         </Button>
       </Modal.Footer>
     </Modal>

@@ -9,6 +9,7 @@ const DiaryGetter = () => {
   const token = localStorage.getItem("token");
 
   const getDiary = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/diary-entries",
@@ -21,12 +22,10 @@ const DiaryGetter = () => {
       );
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(
-          data.message || "Errore nel caricamento dei vocal memo"
-        );
+        throw new Error(data.message || "Error retrieving diary entries");
       }
       const data = await response.json();
-      console.log("Dati ricevuti:", data);
+
       const sortedData = [...data].sort(
         (a, b) => new Date(b.dataRegistrazione) - new Date(a.dataRegistrazione)
       );
@@ -34,14 +33,14 @@ const DiaryGetter = () => {
 
       setDiary(reversedData);
     } catch (error) {
-      setError(error.message);
+      console.log(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
   };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-
     const day = date.getDate();
     const month = date.toLocaleString("en-GB", { month: "long" });
     const year = date.getFullYear();
@@ -88,7 +87,13 @@ const DiaryGetter = () => {
       <Container fluid>
         <Row>
           <Col className="d-flex justify-content-center">
-            <Alert variant="danger">{error}</Alert>
+            <Alert
+              variant="danger"
+              onClose={() => setError(false)}
+              dismissible
+            >
+              Whoops, something went wrong. Please try again.
+            </Alert>
           </Col>
         </Row>
       </Container>

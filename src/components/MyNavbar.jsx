@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MyNavbar = () => {
-  // Stato per tracciare se l'utente è loggato
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // Effetto per verificare se l'utente è già loggato al caricamento della pagina
+  //controllo subito se è loggato
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -18,10 +17,9 @@ const MyNavbar = () => {
   }, []);
 
   const handleLogout = () => {
-    // Rimuovi il token dal localStorage per eseguire il logout
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    navigate("/"); // Reindirizza l'utente alla homepage dopo il logout
+    navigate("/");
   };
 
   return (
@@ -31,52 +29,42 @@ const MyNavbar = () => {
       className="border border-1 border-dark"
     >
       <Container fluid>
-        <Navbar.Brand href="/">Capstone</Navbar.Brand>
+        <Navbar.Brand href="/">Patricia's Capstone project</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
-              as={NavLink}
+              as={Link}
+              to="/"
+              onClick={isLoggedIn ? handleLogout : undefined}
+            >
+              {isLoggedIn ? "Logout" : "Login"}
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
               to="/playlist"
             >
               PlaylistCreator
             </Nav.Link>
             <Nav.Link
-              as={NavLink}
+              as={Link}
               to="/diary"
             >
               Diary
             </Nav.Link>
-            {/* Condizione per mostrare Login o Logout */}
-            {isLoggedIn ? (
-              <Nav.Link
-                as={NavLink}
-                to="/"
-                onClick={handleLogout}
-              >
-                Logout
-              </Nav.Link>
-            ) : (
-              <Nav.Link
-                as={NavLink}
-                to="/"
-              >
-                Login
-              </Nav.Link>
-            )}
+
             <Nav.Link
-              as={NavLink}
+              as={Link}
               to="/profile"
             >
               Profile
             </Nav.Link>
           </Nav>
 
-          {/* Link Backoffice, visibile solo se l'utente è loggato */}
           {isLoggedIn && (
             <Nav className="ms-auto">
               <Nav.Link
-                as={NavLink}
+                as={Link}
                 to="/manager"
               >
                 Backoffice

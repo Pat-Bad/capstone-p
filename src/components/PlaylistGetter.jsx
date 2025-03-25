@@ -26,12 +26,14 @@ const PlaylistGetter = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [playlistToDelete, setPlaylistToDelete] = useState(null);
   const [videoTitles, setVideoTitles] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const token = localStorage.getItem("token");
   const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 
-  // Funzione per ottenere le playlist
   const getPlaylists = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/playlist/with-audio",
@@ -39,23 +41,24 @@ const PlaylistGetter = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
+          credentials: "include", //per evitare cors error, gli dico di includere headers e cookie da questo dominio (che è diverso da quello del backend)
         }
       );
-
       const data = await response.json();
-      console.log("Playlist data:", data);
-
       if (response.ok) {
         setPlaylists(data);
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        //oggetti vuoti per inizializzare lo stato quando monta il componente.
+        //per ogni playlist, indice del video corrente a 0 e stato di play a false (quindi, primo video della playlist, non in riproduzione)
+        //per ogni video, richiamo fetchVideoTitle per ottenere il titolo
 
-        // Inizializza gli indici correnti e gli stati di play
         const indices = {};
         const initialPlayStates = {};
         const titles = {};
         for (const playlist of data) {
+          //costrutto for...of per leggibilità del codice
           indices[playlist.id] = 0;
           initialPlayStates[playlist.id] = false;
 
@@ -66,15 +69,20 @@ const PlaylistGetter = () => {
             }
           }
         }
-
         setCurrentVideoIndices(indices);
         setPlayStates(initialPlayStates);
         setVideoTitles(titles);
       } else {
-        console.error("Errore nel caricamento delle playlist:", data);
+        console.error("Error in fetching playlists:", data);
+        setError(true);
       }
     } catch (error) {
-      console.error("Errore nel caricamento delle playlist:", error);
+      console.error("Error in fetching playlists:", error);
+      setError(true);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+      setError(false);
     }
   };
 
@@ -86,6 +94,7 @@ const PlaylistGetter = () => {
     setSelectedPlaylist(playlist);
     setShowModal(true);
   };
+
   useEffect(() => {
     const fetchTitles = async () => {
       if (playlists.length === 0) return;
@@ -105,6 +114,7 @@ const PlaylistGetter = () => {
     fetchTitles();
   }, [playlists]);
   const fetchVideoTitle = async (videoId) => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet`
@@ -112,10 +122,14 @@ const PlaylistGetter = () => {
       const data = await response.json();
       return data.items.length > 0
         ? data.items[0].snippet.title
-        : "Titolo non disponibile";
+        : "Title not found";
     } catch (error) {
-      console.error("Errore nel recupero del titolo:", error);
-      return "Errore nel caricamento";
+      console.error("Error in fetching video title:", error);
+      setError(true);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+      setError(false);
     }
   };
 
@@ -123,7 +137,7 @@ const PlaylistGetter = () => {
   const handlePrevious = (playlistId) => {
     setCurrentVideoIndices((prev) => ({
       ...prev,
-      [playlistId]: Math.max(0, prev[playlistId] - 1),
+      [playlistId]: Math.max(0, prev[playlistId] - 1), //non può andare sotto 0
     }));
 
     // Reset play state
@@ -134,20 +148,20 @@ const PlaylistGetter = () => {
   };
 
   const handleNext = (playlistId, maxIndex) => {
-    const nextIndex = Math.min(maxIndex, currentVideoIndices[playlistId] + 1);
+    const nextIndex = Math.min(maxIndex, currentVideoIndices[playlistId] + 1); //maxindex per eveitare errore
     setCurrentVideoIndices((prev) => ({
       ...prev,
       [playlistId]: nextIndex,
     }));
 
-    // Reset play state per far partire il prossimo video
+    // Reset play state
     setPlayStates((prev) => ({
       ...prev,
-      [playlistId]: true,
+      [playlistId]: true, //per farlo partire
     }));
   };
 
-  // Estrai l'ID del video da un URL di YouTube
+  // Estrae l'ID del video da un URL di YouTube
   const extractVideoId = (url) => {
     if (!url) return null;
 
@@ -156,7 +170,7 @@ const PlaylistGetter = () => {
       /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
     const match = url.match(watchRegex);
 
-    return match && match[1] ? match[1] : null;
+    return match && match[1] ? match[1] : null; //se c'è, lo ritorna
   };
 
   // Funzione per gestire play/pause
@@ -168,15 +182,12 @@ const PlaylistGetter = () => {
   };
 
   const handleDeleteClick = (playlistId) => {
-    if (!token) {
-      alert("Devi essere loggato per eliminare la playlist.");
-      return;
-    }
     setPlaylistToDelete(playlistId);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlistToDelete}`,
@@ -205,16 +216,17 @@ const PlaylistGetter = () => {
           return updatedPlayStates;
         });
       } else {
-        console.error(
-          "Errore nell'eliminazione della playlist:",
-          await response.text()
-        );
+        setError(true);
+        await response.text();
       }
     } catch (error) {
-      console.error("Errore nel tentativo di eliminare la playlist:", error);
+      console.log("Error in deleting playlist:", error);
+      setError(true);
+      setLoading(false);
     } finally {
       setShowDeleteModal(false);
       setPlaylistToDelete(null);
+      setLoading(false);
     }
   };
 
@@ -226,7 +238,6 @@ const PlaylistGetter = () => {
       [playlistId]: nextIndex,
     }));
 
-    // Impostiamo play su true per far partire il prossimo video automaticamente
     setPlayStates((prev) => ({
       ...prev,
       [playlistId]: true,
@@ -282,7 +293,6 @@ const PlaylistGetter = () => {
                   </div>
                 </div>
 
-                {/* Audio del VocalMemo */}
                 <div className="d-flex justify-content-around">
                   <audio
                     id={`audio-${playlist.id}`}
@@ -336,7 +346,6 @@ const PlaylistGetter = () => {
                           isPlaying ? 1 : 0
                         }&controls=1&modestbranding=1&rel=0`}
                         title={`YouTube video player - ${playlist.nomePlaylist}`}
-                        frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         onEnded={() =>
@@ -433,7 +442,6 @@ const PlaylistGetter = () => {
           />
         )}
 
-        {/* Delete Confirmation Modal */}
         <DeleteConfirmationModal
           show={showDeleteModal}
           onHide={() => setShowDeleteModal(false)}
@@ -443,6 +451,21 @@ const PlaylistGetter = () => {
               ?.nomePlaylist || ""
           }
         />
+        {loading && (
+          <Spinner
+            animation="border"
+            variant="primary"
+          />
+        )}
+        {error && (
+          <Alert
+            variant="danger"
+            onClose={() => setError(false)}
+            dismissible
+          >
+            Whoops, something went wrong. Please try again.
+          </Alert>
+        )}
       </Row>
     </Container>
   );

@@ -5,7 +5,6 @@ const ProfilePage = () => {
   return (
     <Container>
       <h2>Your playlists 🎧</h2>
-
       <PlaylistGetter />
     </Container>
   );

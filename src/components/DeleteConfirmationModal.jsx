@@ -12,9 +12,7 @@ const DeleteConfirmationModal = ({ show, onHide, onConfirm, playlistName }) => {
       <Modal.Header closeButton>
         <Modal.Title>Confirm Delete</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        Are you sure you want to delete the playlist "{playlistName}"?
-      </Modal.Body>
+      <Modal.Body>Are you sure you want to delete "{playlistName}"?</Modal.Body>
       <Modal.Footer>
         <Button
           style={{ backgroundColor: "#C465A9", border: "2px solid #3DB3CF" }}

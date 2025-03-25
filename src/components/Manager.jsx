@@ -11,40 +11,28 @@ const Manager = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "patprojects-1c802b2b.koyeb.app/api/auth/members",
+        "https://patprojects-1c802b2b.koyeb.app/api/auth/members",
+
         {
           method: "GET",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
           },
         }
       );
 
       if (response.status === 500) {
-        throw new Error(
-          "Accesso negato: devi essere un amministratore per vedere il contenuto di questa pagina."
-        );
-      }
-
-      if (!response.ok) {
-        const contentType = response.headers.get("Content-Type");
-        let errorMessage = `Errore ${response.status}: ${response.statusText}`;
-
-        if (contentType && contentType.includes("application/json")) {
-          const data = await response.json();
-          errorMessage = data.message || "Errore nel caricamento dei membri";
-        } else {
-          errorMessage = await response.text(); // Legge l'errore come testo
-        }
-
-        throw new Error(errorMessage);
+        throw new Error("You are not authorized to access this resource.");
+      } else if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
       setMembers(data);
     } catch (error) {
-      setError(error.message);
+      console.log(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -59,20 +47,23 @@ const Manager = () => {
       style={{ overflowX: "auto", maxWidth: "50%" }}
       className="text-center mx-auto"
     >
-      {/* Mostra un messaggio di caricamento mentre i membri sono in fase di recupero */}
-      {loading && <p>Loading...</p>}
-
-      {/* Mostra un messaggio di errore se c'è un problema nella fetch */}
-      {error && (
-        <div
-          className="alert alert-danger"
-          role="alert"
-        >
-          {error}
-        </div>
+      {loading && (
+        <Spinner
+          animation="border"
+          variant="primary"
+        />
       )}
 
-      {/* Renderizza i membri solo se ci sono */}
+      {error && (
+        <Alert
+          variant="danger"
+          onClose={() => setError(false)}
+          dismissible
+        >
+          Whoops, something went wrong. Please try again.
+        </Alert>
+      )}
+
       {members.length > 0 ? (
         <Table
           striped
@@ -108,16 +99,14 @@ const Manager = () => {
             </tr>
           </thead>
           <tbody className="border border-3">
-            {/* Mappa i membri, escluso il primo indice (index > 1) */}
-            {members
-              .filter((member, index) => index > 0)
-              .map((member) => (
-                <tr key={member.id}>
-                  <td>{member.id}</td>
-                  <td>{member.username}</td>
-                  <td>{member.email}</td>
-                </tr>
-              ))}
+            {/* Mappa i membri, escluso il primo indice (index > 1 (perché nel db i primi due sono "fittizi")) */}
+            {members.slice(1).map((member) => (
+              <tr key={member.id}>
+                <td>{member.id}</td>
+                <td>{member.username}</td>
+                <td>{member.email}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       ) : (
