@@ -74,6 +74,7 @@ const DiaryGetter = () => {
           <Spinner
             animation="border"
             variant="primary"
+            style={{ textAlign: "center" }}
           />
         )}
         {error && (
