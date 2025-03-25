@@ -69,15 +69,15 @@ const DiaryGetter = () => {
 
   if (loading) {
     return (
-      <Container
-        fluid
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner
-          animation="border"
-          variant="primary"
-        />
+      <Container fluid>
+        <Row>
+          <Col className="d-flex justify-content-center">
+            <Spinner
+              animation="border"
+              variant="primary"
+            />
+          </Col>
+        </Row>
       </Container>
     );
   }
