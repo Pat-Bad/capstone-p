@@ -71,11 +71,12 @@ const DiaryGetter = () => {
     <Container fluid>
       <Row className="justify-content-center">
         {loading && (
-          <Spinner
-            animation="border"
-            variant="primary"
-            style={{ textAlign: "center" }}
-          />
+          <Col className="d-flex justify-content-center">
+            <Spinner
+              animation="border"
+              variant="primary"
+            />
+          </Col>
         )}
         {error && (
           <Alert
