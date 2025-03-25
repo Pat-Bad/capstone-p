@@ -189,7 +189,7 @@ const LoginAndRegistrationForms = () => {
               animation="border"
               style={{
                 backgroundColor: "#269BC6",
-                border: "2px solidrgb(7, 8, 8)",
+                border: "2px solid #5FA2C5",
                 borderRadius: "50%",
                 width: "50px",
                 height: "50px",
