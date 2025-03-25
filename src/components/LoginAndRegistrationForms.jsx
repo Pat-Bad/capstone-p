@@ -176,7 +176,11 @@ const LoginAndRegistrationForms = () => {
         )}
         {showAlert && (
           <Alert
-            variant="light"
+            style={{
+              backgroundColor: "rgb(38, 155, 198, 0.5)",
+              border: "2px solid #4B67A1",
+              width: "50%",
+            }}
             onClose={() => setShowAlert(false)}
             dismissible
           >
