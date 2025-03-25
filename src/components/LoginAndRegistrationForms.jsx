@@ -78,15 +78,7 @@ const LoginAndRegistrationForms = () => {
       <div className="row g-3 justify-content-center">
         <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
-          {showAlert && (
-            <Alert
-              variant="light"
-              onClose={() => setShowAlert(false)}
-              dismissible
-            >
-              Registration successful! Check your inbox 🖖
-            </Alert>
-          )}
+
           {errorAlert && (
             <Alert
               variant="danger"
@@ -96,20 +88,7 @@ const LoginAndRegistrationForms = () => {
               Whoops, something went wrong. Please try again.
             </Alert>
           )}
-          {loading && (
-            <div className="d-flex justify-content-center">
-              <Spinner
-                animation="border"
-                style={{
-                  backgroundColor: "#269BC6",
-                  border: "2px solidrgb(7, 8, 8)",
-                  borderRadius: "50%",
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
-            </div>
-          )}
+
           <Form onSubmit={handleRegisterSubmit}>
             <span className="d-flex">
               <Form.Group className="mb-3 w-50">
@@ -217,6 +196,29 @@ const LoginAndRegistrationForms = () => {
             </Button>
           </Form>
         </div>
+        {showAlert && (
+          <Alert
+            variant="light"
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
+            Registration successful! Check your inbox 🖖
+          </Alert>
+        )}
+        {loading && (
+          <div className="d-flex justify-content-center">
+            <Spinner
+              animation="border"
+              style={{
+                backgroundColor: "#269BC6",
+                border: "2px solidrgb(7, 8, 8)",
+                borderRadius: "50%",
+                width: "50px",
+                height: "50px",
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
