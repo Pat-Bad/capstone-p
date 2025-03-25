@@ -22,7 +22,8 @@ const Manager = () => {
         }
       );
 
-      if (response.status === 500) {
+      if (response.status === 500 || response.status === 403) {
+        setError(true);
         throw new Error("You are not authorized to access this resource.");
       } else if (!response.ok) {
         throw new Error("Network response was not ok");
