@@ -70,23 +70,6 @@ const DiaryGetter = () => {
   return (
     <Container fluid>
       <Row className="justify-content-center">
-        {loading && (
-          <Spinner
-            animation="border"
-            variant="primary"
-            style={{ minHeight: "100vh" }}
-          />
-        )}
-        {error && (
-          <Alert
-            variant="danger"
-            onClose={() => setError(false)}
-            dismissible
-            style={{ minHeight: "100vh" }}
-          >
-            Whoops, something went wrong. Please try again.
-          </Alert>
-        )}
         {diary.map((audio) => (
           <Col
             key={audio.id}
@@ -106,6 +89,21 @@ const DiaryGetter = () => {
                 date={formatDate(audio.dataRegistrazione)}
               />
             </div>
+            {loading && (
+              <Spinner
+                animation="border"
+                variant="primary"
+              />
+            )}
+            {error && (
+              <Alert
+                variant="danger"
+                onClose={() => setError(false)}
+                dismissible
+              >
+                Whoops, something went wrong. Please try again.
+              </Alert>
+            )}
           </Col>
         ))}
       </Row>
