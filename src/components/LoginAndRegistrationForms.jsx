@@ -193,12 +193,7 @@ const LoginAndRegistrationForms = () => {
           <div className="d-flex justify-content-center">
             <Spinner
               animation="border"
-              style={{
-                borderColor: "#3B5A9D",
-                borderRadius: "50%",
-                width: "50px",
-                height: "50px",
-              }}
+              variant="primary"
             />
           </div>
         )}
