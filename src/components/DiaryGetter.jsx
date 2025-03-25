@@ -74,6 +74,7 @@ const DiaryGetter = () => {
           <Spinner
             animation="border"
             variant="primary"
+            style={{ minHeight: "100vh" }}
           />
         )}
         {error && (
@@ -81,6 +82,7 @@ const DiaryGetter = () => {
             variant="danger"
             onClose={() => setError(false)}
             dismissible
+            style={{ minHeight: "100vh" }}
           >
             Whoops, something went wrong. Please try again.
           </Alert>
