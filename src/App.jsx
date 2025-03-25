@@ -16,7 +16,7 @@ function App() {
       <header>
         <MyNavbar />
       </header>
-      <main style={{ paddingTop: "160px", paddingBottom: "80px" }}>
+      <main style={{ paddingTop: "150px", paddingBottom: "80px" }}>
         <Routes>
           <Route
             path="/playlist"

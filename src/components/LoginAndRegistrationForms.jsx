@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Alert, Button, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const LoginAndRegistrationForms = () => {
   const navigate = useNavigate();
+
   const [registerData, setRegisterData] = useState({
     username: "",
     email: "",
@@ -11,6 +12,8 @@ const LoginAndRegistrationForms = () => {
   });
   const [loginData, setLoginData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
   const handleRegisterChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +36,17 @@ const LoginAndRegistrationForms = () => {
       },
       body: JSON.stringify(registerData),
     })
-      .then((response) => response.text())
+      .then((response) => response.text()) //va bene solo text, al contrario del login da cui devo prendere il token
       .then((data) => {
         console.log(data);
-        console.log("Registration successful", data);
-        setLoading(false);
+        setShowAlert(true);
       })
-      .catch((error) => console.error("Error during registration:", error));
+
+      .catch((error) => {
+        console.error("Error during registration:", error), setErrorAlert(true);
+      })
+
+      .finally(() => setLoading(false));
   };
 
   const handleLoginSubmit = (e) => {
@@ -53,17 +60,16 @@ const LoginAndRegistrationForms = () => {
       },
       body: JSON.stringify(loginData),
     })
-      .then((response) => response.json())
+      .then((response) => response.json()) //qui mi serve l'oggetto da cui estrarre il token
       .then((data) => {
         if (data.token) {
           localStorage.setItem("token", data.token);
         }
-        console.log("Login successful", data);
-
         navigate("/playlist");
         setLoading(false);
       })
       .catch((error) => console.error("Error during login:", error));
+    setErrorAlert(true);
     setLoading(false);
   };
 
@@ -72,6 +78,38 @@ const LoginAndRegistrationForms = () => {
       <div className="row g-3 justify-content-center">
         <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
+          {showAlert && (
+            <Alert
+              variant="light"
+              onClose={() => setShowAlert(false)}
+              dismissible
+            >
+              Registration successful! Check your inbox 🖖
+            </Alert>
+          )}
+          {errorAlert && (
+            <Alert
+              variant="danger"
+              onClose={() => setErrorAlert(false)}
+              dismissible
+            >
+              Whoops, something went wrong. Please try again.
+            </Alert>
+          )}
+          {loading && (
+            <div className="d-flex justify-content-center">
+              <Spinner
+                animation="border"
+                style={{
+                  backgroundColor: "#269BC6",
+                  border: "2px solidrgb(7, 8, 8)",
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
+            </div>
+          )}
           <Form onSubmit={handleRegisterSubmit}>
             <span className="d-flex">
               <Form.Group className="mb-3 w-50">
@@ -99,7 +137,7 @@ const LoginAndRegistrationForms = () => {
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="Enter email"
+                placeholder="Email"
                 name="email"
                 value={registerData.email}
                 onChange={handleRegisterChange}
@@ -114,20 +152,37 @@ const LoginAndRegistrationForms = () => {
                 border: "2px solid #4B67A1",
               }}
             >
-              {loading ? (
-                <Spinner
-                  animation="border"
-                  size="sm"
-                  style={{ marginRight: "10px" }}
-                />
-              ) : null}
-              {loading ? "Processing..." : "Register and try to login 😊"}
+              Register and try to login 😊
             </Button>
           </Form>
         </div>
 
         <div className="col-md-5 p-4">
           <h2 className="mb-3">Login</h2>
+          {errorAlert && (
+            <Alert
+              variant="danger"
+              onClose={() => setErrorAlert(false)}
+              dismissible
+            >
+              Whoops, something went wrong. Please try again.
+            </Alert>
+          )}
+          {loading && (
+            <div className="d-flex justify-content-center">
+              <Spinner
+                animation="border"
+                style={{
+                  backgroundColor: "#269BC6",
+                  border: "2px solidrgb(7, 8, 8)",
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
+            </div>
+          )}
+
           <Form onSubmit={handleLoginSubmit}>
             <Form.Group className="mb-3 w-75">
               <Form.Label>Username</Form.Label>
@@ -158,14 +213,7 @@ const LoginAndRegistrationForms = () => {
                 border: "2px solid #4B67A1",
               }}
             >
-              {loading ? (
-                <Spinner
-                  animation="border"
-                  size="sm"
-                  style={{ marginRight: "10px" }}
-                />
-              ) : null}
-              {loading ? "Processing..." : "Login 🎶"}
+              Login 🎶
             </Button>
           </Form>
         </div>
