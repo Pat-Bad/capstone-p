@@ -67,39 +67,6 @@ const DiaryGetter = () => {
     getDiary();
   }, []);
 
-  if (loading) {
-    return (
-      <Container fluid>
-        <Row>
-          <Col className="d-flex justify-content-center">
-            <Spinner
-              animation="border"
-              variant="primary"
-            />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container fluid>
-        <Row>
-          <Col className="d-flex justify-content-center">
-            <Alert
-              variant="danger"
-              onClose={() => setError(false)}
-              dismissible
-            >
-              Whoops, something went wrong. Please try again.
-            </Alert>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
-
   return (
     <Container fluid>
       <Row className="justify-content-center">
@@ -124,6 +91,21 @@ const DiaryGetter = () => {
             </div>
           </Col>
         ))}
+        {loading && (
+          <Spinner
+            animation="border"
+            variant="primary"
+          />
+        )}
+        {error && (
+          <Alert
+            variant="danger"
+            onClose={() => setError(false)}
+            dismissible
+          >
+            Whoops, something went wrong. Please try again.
+          </Alert>
+        )}
       </Row>
     </Container>
   );
