@@ -68,8 +68,11 @@ const LoginAndRegistrationForms = () => {
         navigate("/playlist");
         setLoading(false);
       })
-      .catch((error) => console.error("Error during login:", error));
-    setErrorAlert(true);
+      .catch(
+        (error) => console.error("Error during login:", error),
+        setErrorAlert(true)
+      );
+
     setLoading(false);
   };
 
@@ -78,16 +81,6 @@ const LoginAndRegistrationForms = () => {
       <div className="row g-3 justify-content-center">
         <div className="col-md-5 p-4 ">
           <h2 className="mb-3">Register</h2>
-
-          {errorAlert && (
-            <Alert
-              variant="danger"
-              onClose={() => setErrorAlert(false)}
-              dismissible
-            >
-              Whoops, something went wrong. Please try again.
-            </Alert>
-          )}
 
           <Form onSubmit={handleRegisterSubmit}>
             <span className="d-flex">
@@ -173,6 +166,15 @@ const LoginAndRegistrationForms = () => {
             </Button>
           </Form>
         </div>
+        {errorAlert && (
+          <Alert
+            variant="danger"
+            onClose={() => setErrorAlert(false)}
+            dismissible
+          >
+            Whoops, something went wrong. Please try again.
+          </Alert>
+        )}
         {showAlert && (
           <Alert
             variant="light"
