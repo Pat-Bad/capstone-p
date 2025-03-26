@@ -48,21 +48,35 @@ const Manager = () => {
       style={{ overflowX: "auto", maxWidth: "50%" }}
       className="text-center mx-auto"
     >
+      {error && (
+        <Alert
+          variant="danger"
+          dismissible
+          onClose={() => setError(false)}
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
+        >
+          Whoops. Something went wrong!
+        </Alert>
+      )}
+
       {loading && (
         <Spinner
           animation="border"
           variant="primary"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
         />
-      )}
-
-      {error && (
-        <Alert
-          variant="danger"
-          onClose={() => setError(false)}
-          dismissible
-        >
-          Whoops, something went wrong. Please try again.
-        </Alert>
       )}
 
       {members.length > 0 ? (

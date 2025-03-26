@@ -133,6 +133,8 @@ const YouTubePlaylistCreator = () => {
       {error && (
         <Alert
           variant="danger"
+          dismissible
+          onClose={() => setError(false)}
           style={{
             position: "fixed",
             top: "50%",

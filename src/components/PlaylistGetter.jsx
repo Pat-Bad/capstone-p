@@ -86,10 +86,8 @@ const PlaylistGetter = () => {
     } catch (error) {
       console.error("Error in fetching playlists:", error);
       setError(true);
-      setLoading(false);
     } finally {
       setLoading(false);
-      setError(false);
     }
   };
 
@@ -461,6 +459,8 @@ const PlaylistGetter = () => {
         {error && (
           <Alert
             variant="danger"
+            dismissible
+            onClose={() => setError(false)}
             style={{
               position: "fixed",
               top: "50%",

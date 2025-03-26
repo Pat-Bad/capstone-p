@@ -187,13 +187,19 @@ const LoginAndRegistrationForms = () => {
             Registration successful! Check your inbox 🖖
           </Alert>
         )}
+
         {loading && (
-          <div className="d-flex justify-content-center">
-            <Spinner
-              animation="border"
-              variant="primary"
-            />
-          </div>
+          <Spinner
+            animation="border"
+            variant="primary"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "9999",
+            }}
+          />
         )}
       </div>
     </div>

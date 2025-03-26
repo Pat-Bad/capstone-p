@@ -70,22 +70,35 @@ const DiaryGetter = () => {
   return (
     <Container fluid>
       <Row className="justify-content-center">
-        {loading && (
-          <Col className="d-flex justify-content-center mt-5">
-            <Spinner
-              animation="border"
-              variant="primary"
-            />
-          </Col>
-        )}
         {error && (
           <Alert
             variant="danger"
-            onClose={() => setError(false)}
             dismissible
+            onClose={() => setError(false)}
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "9999",
+            }}
           >
-            Whoops, something went wrong. Please try again.
+            Whoops. Something went wrong!
           </Alert>
+        )}
+
+        {loading && (
+          <Spinner
+            animation="border"
+            variant="primary"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "9999",
+            }}
+          />
         )}
         {diary.map((audio) => (
           <Col
