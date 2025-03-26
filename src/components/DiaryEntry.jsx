@@ -29,15 +29,14 @@ const DiaryEntry = () => {
               type: "audio/mpeg",
             });
             const audioUrl = URL.createObjectURL(audioBlob);
-            setAudioUrl(audioUrl);
+            setAudioUrl(audioUrl); // Imposta l'URL dell'audio registrato
             audioChunksRef.current = [];
-            await uploadAudioToBackend(audioBlob);
+            await uploadAudioToBackend(audioBlob); // Carica l'audio dopo che la registrazione viene fermata
           };
           mediaRecorderRef.current.start();
         })
         .catch((err) => {
           console.error("Errore nell'accesso al microfono:", err);
-          setError("Microphone access denied");
         });
     } else if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -52,58 +51,13 @@ const DiaryEntry = () => {
     };
   }, [isRecording]);
 
-  // Funzione per inviare l'URL salvato a Cloudinary al backend
-  const saveDiaryEntryToBackend = async (url) => {
-    if (!url) {
-      console.error("URL is undefined, cannot save entry.");
-      setError("Invalid file upload. Please try again.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append("url", url);
-
-      const response = await fetch(
-        "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
-        {
-          method: "POST",
-          body: formData, // Now using FormData instead of JSON
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        console.log("Entry saved successfully.");
-      } else {
-        setError("Failed to save diary entry.");
-      }
-    } catch (error) {
-      console.error("Error saving diary entry:", error);
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Funzione per caricare il file sul backend e ottenere l'URL di Cloudinary
-  const uploadAudioToBackend = async (audioBlob) => {
-    if (!token) {
-      console.error("Missing auth token.");
-      setError("Authentication error. Please log in again.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
+  // Funzione per caricare il file sul backend e cloudinary
+  const uploadAudioToBackend = async (audioBlob, url) => {
     const formData = new FormData();
     formData.append("file", audioBlob);
-
+    formData.append("url", url);
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
@@ -116,24 +70,48 @@ const DiaryEntry = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`Failed to upload: ${response.status}`);
-      }
+      if (response.ok) {
+        const data = await response.json();
+        const url = data.secure_url; // L'URL restituito da Cloudinary
 
-      const data = await response.json();
-      const url = data.secure_url;
-
-      if (url) {
-        await saveDiaryEntryToBackend(url); // Send only the URL now
-      } else {
-        throw new Error("Cloudinary did not return a valid URL.");
+        // Ora invio il file con l'URL
+        await saveDiaryEntryToBackend(audioBlob, url); // Funzione per inviare l'URL al backend
       }
     } catch (error) {
-      console.error("Upload error:", error);
-      setError("Upload failed. Please try again.");
+      console.log(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
+
+    const saveDiaryEntryToBackend = async (audioBlob, url) => {
+      const formData = new FormData();
+      formData.append("file", audioBlob);
+      formData.append("url", url);
+      setLoading(true);
+
+      try {
+        const response = await fetch(
+          "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          console.log("Entry saved");
+        }
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
   };
 
   return (
@@ -161,7 +139,7 @@ const DiaryEntry = () => {
       )}
       <button
         onClick={toggleRecording}
-        className="custom-btn ms-5"
+        className="custom-btn ms-5 "
         style={{
           width: "200px",
           height: "50px",
@@ -180,10 +158,10 @@ const DiaryEntry = () => {
       {error && (
         <Alert
           variant="danger"
-          onClose={() => setError(null)}
+          onClose={() => setError(false)}
           dismissible
         >
-          {error}
+          Whoops, something went wrong. Please try again.
         </Alert>
       )}
     </div>
