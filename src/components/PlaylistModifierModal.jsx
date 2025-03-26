@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Modal, Button, Form, ListGroup } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Form,
+  ListGroup,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
 
 const PlaylistModifierModal = ({
   show,
@@ -181,6 +188,36 @@ const PlaylistModifierModal = ({
         >
           Search
         </Button>
+        {error && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() => setError(false)}
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "9999",
+            }}
+          >
+            Whoops. Something went wrong!
+          </Alert>
+        )}
+
+        {loading && (
+          <Spinner
+            animation="border"
+            variant="primary"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "9999",
+            }}
+          />
+        )}
 
         <ListGroup className="mt-3">
           {searchResults.map((video) => (

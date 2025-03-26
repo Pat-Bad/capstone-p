@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Modal, Row, Card } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Modal,
+  Row,
+  Card,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 //funzione di ricerca su yt api
