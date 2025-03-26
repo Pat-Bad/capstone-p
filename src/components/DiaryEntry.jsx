@@ -52,13 +52,13 @@ const DiaryEntry = () => {
   }, [isRecording]);
 
   // Funzione per caricare il file sul backend e cloudinary
-  const uploadAudioToBackend = async (audioBlob, audioUrl) => {
+  const uploadAudioToBackend = async (audioBlob) => {
     const formData = new FormData();
     formData.append("file", audioBlob);
-    formData.append("audioUrl", audioUrl);
 
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
@@ -71,15 +71,16 @@ const DiaryEntry = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to upload diary entry");
+      if (response.ok) {
+        console.log("Diary entry saved successfully!");
+        const data = await response.json();
+        setAudioUrl(data.secure_url);
+      } else {
+        throw new Error("Error saving diary entry.");
       }
-
-      const data = await response.json();
-      console.log("Diary entry uploaded successfully", data);
     } catch (error) {
-      console.error("Upload error:", error);
-      setError("Upload failed. Please try again.");
+      console.log(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
