@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Alert, Spinner } from "react-bootstrap";
 
 const DiaryEntry = () => {
   const [isRecording, setIsRecording] = useState(false);
