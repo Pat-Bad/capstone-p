@@ -44,7 +44,7 @@ const PlaylistGetter = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://patprojects-1c802b2b.koyeb.app/api/playlist/with-audio",
+        `https://patprojects-1c802b2b.koyeb.app/api/playlist/with-audio?page=0&size=10`,
         {
           method: "GET",
           headers: {
