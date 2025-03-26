@@ -114,61 +114,61 @@ const DiaryEntry = () => {
         setLoading(false);
       }
     };
+  };
 
-    return (
-      <div className="my-3 d-flex align-items-center justify-content-center">
-        {audioUrl ? (
-          <div
-            style={{
-              marginLeft: "20px",
-              border: "5px solid #9385B6",
-              borderRadius: "25px",
-              backgroundColor: "rgba(147, 133, 182, 0.6)",
-              padding: "50px",
-            }}
-          >
-            <h4>Today's entry</h4>
-            <audio
-              controls
-              src={audioUrl}
-            ></audio>
-          </div>
-        ) : (
-          <div>
-            <h4>You don't have any diary entries yet</h4>
-            <h6>Start recording something </h6>
-          </div>
-        )}
-        <button
-          onClick={toggleRecording}
-          className="custom-btn "
+  return (
+    <div className="my-3 d-flex align-items-center justify-content-center">
+      {audioUrl ? (
+        <div
           style={{
-            width: "200px",
-            height: "50px",
-            padding: "5px",
+            marginLeft: "20px",
+            border: "5px solid #9385B6",
+            borderRadius: "25px",
+            backgroundColor: "rgba(147, 133, 182, 0.6)",
+            padding: "50px",
           }}
         >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
+          <h4>Today's entry</h4>
+          <audio
+            controls
+            src={audioUrl}
+          ></audio>
+        </div>
+      ) : (
+        <div>
+          <h4>You don't have any diary entries yet</h4>
+          <h6>Start recording something </h6>
+        </div>
+      )}
+      <button
+        onClick={toggleRecording}
+        className="custom-btn "
+        style={{
+          width: "200px",
+          height: "50px",
+          padding: "5px",
+        }}
+      >
+        {isRecording ? "Stop Recording" : "Start Recording"}
+      </button>
 
-        {loading && (
-          <Spinner
-            animation="border"
-            variant="primary"
-          />
-        )}
-        {error && (
-          <Alert
-            variant="danger"
-            onClose={() => setError(false)}
-            dismissible
-          >
-            Whoops, something went wrong. Please try again.
-          </Alert>
-        )}
-      </div>
-    );
-  };
+      {loading && (
+        <Spinner
+          animation="border"
+          variant="primary"
+        />
+      )}
+      {error && (
+        <Alert
+          variant="danger"
+          onClose={() => setError(false)}
+          dismissible
+        >
+          Whoops, something went wrong. Please try again.
+        </Alert>
+      )}
+    </div>
+  );
 };
 
 export default DiaryEntry;
