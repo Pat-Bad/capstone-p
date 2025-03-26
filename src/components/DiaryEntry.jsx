@@ -141,7 +141,7 @@ const DiaryEntry = () => {
       )}
       <button
         onClick={toggleRecording}
-        className="custom-btn ms-3 mt-3"
+        className="custom-btn ms-5 "
         style={{
           width: "200px",
           height: "50px",
