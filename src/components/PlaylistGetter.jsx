@@ -56,7 +56,8 @@ const PlaylistGetter = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        setPlaylists(data);
+        const playlists = data.content || [];
+        setPlaylists(playlists);
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         //oggetti vuoti per inizializzare lo stato quando monta il componente.
         //per ogni playlist, indice del video corrente a 0 e stato di play a false (quindi, primo video della playlist, non in riproduzione)
@@ -65,7 +66,7 @@ const PlaylistGetter = () => {
         const indices = {};
         const initialPlayStates = {};
         const titles = {};
-        for (const playlist of data) {
+        for (const playlist of playlists) {
           //costrutto for...of per leggibilità del codice
           indices[playlist.id] = 0;
           initialPlayStates[playlist.id] = false;
