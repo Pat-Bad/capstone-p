@@ -117,18 +117,7 @@ const DiaryEntry = () => {
 
     return (
       <div className="my-3 d-flex align-items-center justify-content-center">
-        <button
-          onClick={toggleRecording}
-          className="custom-btn "
-          style={{
-            width: "200px",
-            height: "50px",
-            padding: "5px",
-          }}
-        >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
-        {audioUrl && (
+        {audioUrl ? (
           <div
             style={{
               marginLeft: "20px",
@@ -144,7 +133,24 @@ const DiaryEntry = () => {
               src={audioUrl}
             ></audio>
           </div>
+        ) : (
+          <div>
+            <h4>You don't have any diary entries yet</h4>
+            <h6>Start recording something </h6>
+          </div>
         )}
+        <button
+          onClick={toggleRecording}
+          className="custom-btn "
+          style={{
+            width: "200px",
+            height: "50px",
+            padding: "5px",
+          }}
+        >
+          {isRecording ? "Stop Recording" : "Start Recording"}
+        </button>
+
         {loading && (
           <Spinner
             animation="border"

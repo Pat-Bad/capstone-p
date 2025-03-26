@@ -298,7 +298,7 @@ const YouTubePlaylistCreator = () => {
         <Modal.Body>
           Go to your profile to see the playlist 😎
           <Link
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", border: "2px solid #3DB3CF" }}
             to={`/profile`}
             className="btn"
           >
