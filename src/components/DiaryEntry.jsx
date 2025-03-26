@@ -120,10 +120,32 @@ const DiaryEntry = () => {
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
 
+      {error && (
+        <Alert
+          variant="danger"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
+        >
+          Whoops. Something went wrong!
+        </Alert>
+      )}
+
       {loading && (
         <Spinner
           animation="border"
           variant="primary"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
         />
       )}
     </div>
