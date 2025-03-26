@@ -104,9 +104,7 @@ const DiaryEntry = () => {
           ></audio>
         </div>
       ) : (
-        <div>
-          <h4 className="ps-3">You don't have any diary entries yet! 😱</h4>
-        </div>
+        <p> </p>
       )}
       <button
         onClick={toggleRecording}
