@@ -299,7 +299,7 @@ const PlaylistGetter = () => {
                   </div>
                 </div>
 
-                <div className="d-flex justify-content-around">
+                <div className="d-flex">
                   <audio
                     id={`audio-${playlist.id}`}
                     controls
@@ -310,7 +310,7 @@ const PlaylistGetter = () => {
                     />
                     Your browser does not support the audio element.
                   </audio>
-                  <Dropdown>
+                  <Dropdown className="ps-2 ">
                     <Dropdown.Toggle className="custom-btn">
                       List of songs
                     </Dropdown.Toggle>
