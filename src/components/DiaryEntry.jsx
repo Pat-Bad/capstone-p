@@ -52,11 +52,13 @@ const DiaryEntry = () => {
   }, [isRecording]);
 
   // Funzione per caricare il file sul backend e cloudinary
-  const uploadAudioToBackend = async (audioBlob, url) => {
+  const uploadAudioToBackend = async (audioBlob) => {
     const formData = new FormData();
     formData.append("file", audioBlob);
-    formData.append("url", url);
+
     setLoading(true);
+    setError(null);
+
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
@@ -71,50 +73,16 @@ const DiaryEntry = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const url = data.secure_url; // L'URL restituito da Cloudinary
-
-        // Ora invio il file con l'URL
-        await saveDiaryEntryToBackend(url); // Funzione per inviare l'URL al backend
+        console.log("Diary entry saved successfully:", data);
       } else {
-        setError(true);
+        throw new Error("Errore nel salvataggio dell'entry");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Errore:", error);
       setError(true);
     } finally {
       setLoading(false);
     }
-
-    const saveDiaryEntryToBackend = async (url) => {
-      const formData = new FormData();
-
-      formData.append("url", url);
-      setLoading(true);
-
-      try {
-        const response = await fetch(
-          "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
-          {
-            method: "POST",
-            body: formData,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.ok) {
-          console.log("Entry saved");
-        } else {
-          setError(true);
-        }
-      } catch (error) {
-        console.log(error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
   };
 
   return (
