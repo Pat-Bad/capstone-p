@@ -137,12 +137,11 @@ const DiaryEntry = () => {
       ) : (
         <div>
           <h4>You don't have any diary entries yet</h4>
-          <h6>Start recording something </h6>
         </div>
       )}
       <button
         onClick={toggleRecording}
-        className="custom-btn "
+        className="custom-btn ms-3"
         style={{
           width: "200px",
           height: "50px",
