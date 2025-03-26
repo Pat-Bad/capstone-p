@@ -105,12 +105,12 @@ const DiaryEntry = () => {
         </div>
       ) : (
         <div>
-          <h4 className="ps-5">You don't have any diary entries yet! 😱</h4>
+          <h4 className="ps-3">You don't have any diary entries yet! 😱</h4>
         </div>
       )}
       <button
         onClick={toggleRecording}
-        className="custom-btn ms-5 "
+        className="custom-btn ms-3 "
         style={{
           width: "200px",
           height: "50px",

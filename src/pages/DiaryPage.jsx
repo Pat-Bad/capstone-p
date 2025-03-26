@@ -8,7 +8,7 @@ const DiaryPage = () => {
       fluid
       className="d-flex flex-column align-items-start justify-content-center"
     >
-      <h2 className="mb-4 ps-5">
+      <h2 className="mb-4 ps-3">
         Let's record something or listen to what happened in the past 📖
       </h2>
       <div className="d-flex flex-column align-items-center">
