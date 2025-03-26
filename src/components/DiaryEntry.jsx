@@ -75,10 +75,10 @@ const DiaryEntry = () => {
         const data = await response.json();
         console.log("Diary entry saved successfully:", data);
       } else {
-        throw new Error("Errore nel salvataggio dell'entry");
+        throw new Error("Error in saving diary entry.");
       }
     } catch (error) {
-      console.error("Errore:", error);
+      console.error("Error ", error);
       setError(true);
     } finally {
       setLoading(false);
