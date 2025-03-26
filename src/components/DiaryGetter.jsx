@@ -12,7 +12,7 @@ const DiaryGetter = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/diary-entries",
+        `https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/diary-entries?page=0&size=100`,
         {
           method: "GET",
           headers: {
