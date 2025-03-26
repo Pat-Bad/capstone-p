@@ -52,9 +52,10 @@ const DiaryEntry = () => {
   }, [isRecording]);
 
   // Funzione per caricare il file sul backend e cloudinary
-  const uploadAudioToBackend = async (audioBlob) => {
+  const uploadAudioToBackend = async (audioBlob, audioUrl) => {
     const formData = new FormData();
-    formData.append("file", audioBlob, "diary-entry.mp3");
+    formData.append("file", audioBlob);
+    formData.append("audioUrl", audioUrl);
 
     setLoading(true);
     setError(null);
