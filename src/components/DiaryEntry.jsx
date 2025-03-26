@@ -113,7 +113,7 @@ const DiaryEntry = () => {
         className="custom-btn ms-3 "
         style={{
           width: "200px",
-          height: "50px",
+          minHeight: "50px",
           padding: "5px",
         }}
       >
