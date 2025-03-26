@@ -74,7 +74,7 @@ const DiaryEntry = () => {
         const url = data.secure_url; // L'URL restituito da Cloudinary
 
         // Ora invio il file con l'URL
-        await saveDiaryEntryToBackend(audioBlob, url); // Funzione per inviare l'URL al backend
+        await saveDiaryEntryToBackend(url); // Funzione per inviare l'URL al backend
       } else {
         setError(true);
       }
@@ -85,9 +85,9 @@ const DiaryEntry = () => {
       setLoading(false);
     }
 
-    const saveDiaryEntryToBackend = async (audioBlob, url) => {
+    const saveDiaryEntryToBackend = async (url) => {
       const formData = new FormData();
-      formData.append("file", audioBlob);
+
       formData.append("url", url);
       setLoading(true);
 
