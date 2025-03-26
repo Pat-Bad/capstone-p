@@ -37,6 +37,7 @@ const DiaryEntry = () => {
         })
         .catch((err) => {
           console.error("Errore nell'accesso al microfono:", err);
+          setError("Microphone access denied");
         });
     } else if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -53,30 +54,38 @@ const DiaryEntry = () => {
 
   // Funzione per inviare l'URL salvato a Cloudinary al backend
   const saveDiaryEntryToBackend = async (url) => {
+    if (!url) {
+      console.error("URL is undefined, cannot save entry.");
+      setError("Invalid file upload. Please try again.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
+      const formData = new FormData();
+      formData.append("url", url);
+
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
         {
           method: "POST",
-          body: JSON.stringify({ url }), // Solo l'URL ora
+          body: formData, // Now using FormData instead of JSON
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         }
       );
 
       if (response.ok) {
-        console.log("Entry saved");
+        console.log("Entry saved successfully.");
       } else {
-        setError(true);
+        setError("Failed to save diary entry.");
       }
     } catch (error) {
-      console.log(error);
-      setError(true);
+      console.error("Error saving diary entry:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -84,6 +93,12 @@ const DiaryEntry = () => {
 
   // Funzione per caricare il file sul backend e ottenere l'URL di Cloudinary
   const uploadAudioToBackend = async (audioBlob) => {
+    if (!token) {
+      console.error("Missing auth token.");
+      setError("Authentication error. Please log in again.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     const formData = new FormData();
@@ -101,16 +116,21 @@ const DiaryEntry = () => {
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        const url = data.secure_url; // URL restituito da Cloudinary
-        await saveDiaryEntryToBackend(url); // Invio solo l'URL al backend
+      if (!response.ok) {
+        throw new Error(`Failed to upload: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const url = data.secure_url;
+
+      if (url) {
+        await saveDiaryEntryToBackend(url); // Send only the URL now
       } else {
-        setError(true);
+        throw new Error("Cloudinary did not return a valid URL.");
       }
     } catch (error) {
-      console.log(error);
-      setError(true);
+      console.error("Upload error:", error);
+      setError("Upload failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -160,10 +180,10 @@ const DiaryEntry = () => {
       {error && (
         <Alert
           variant="danger"
-          onClose={() => setError(false)}
+          onClose={() => setError(null)}
           dismissible
         >
-          Whoops, something went wrong. Please try again.
+          {error}
         </Alert>
       )}
     </div>
