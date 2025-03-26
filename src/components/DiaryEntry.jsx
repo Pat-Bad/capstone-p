@@ -57,6 +57,7 @@ const DiaryEntry = () => {
     formData.append("file", audioBlob);
     formData.append("url", url);
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
@@ -75,8 +76,6 @@ const DiaryEntry = () => {
 
         // Ora invio il file con l'URL
         await saveDiaryEntryToBackend(audioBlob, url); // Funzione per inviare l'URL al backend
-      } else {
-        setError(true);
       }
     } catch (error) {
       console.log(error);
@@ -105,8 +104,6 @@ const DiaryEntry = () => {
 
         if (response.ok) {
           console.log("Entry saved");
-        } else {
-          setError(true);
         }
       } catch (error) {
         console.log(error);
