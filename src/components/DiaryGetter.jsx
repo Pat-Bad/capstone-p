@@ -26,7 +26,7 @@ const DiaryGetter = () => {
       }
       const data = await response.json();
 
-      const sortedData = [...data].sort(
+      const sortedData = [...data.entries].sort(
         (a, b) => new Date(b.dataRegistrazione) - new Date(a.dataRegistrazione)
       );
       const reversedData = sortedData.reverse();
