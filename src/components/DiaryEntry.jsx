@@ -52,13 +52,11 @@ const DiaryEntry = () => {
   }, [isRecording]);
 
   // Funzione per caricare il file sul backend e cloudinary
-  const uploadAudioToBackend = async (audioBlob) => {
+  const uploadAudioToBackend = async (audioBlob, url) => {
     const formData = new FormData();
     formData.append("file", audioBlob);
-
+    formData.append("url", url);
     setLoading(true);
-    setError(null);
-
     try {
       const response = await fetch(
         "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
@@ -72,11 +70,13 @@ const DiaryEntry = () => {
       );
 
       if (response.ok) {
-        console.log("Diary entry saved successfully!");
         const data = await response.json();
-        setAudioUrl(data.secure_url);
+        const url = data.secure_url; // L'URL restituito da Cloudinary
+
+        // Ora invio il file con l'URL
+        await saveDiaryEntryToBackend(audioBlob, url); // Funzione per inviare l'URL al backend
       } else {
-        throw new Error("Error saving diary entry.");
+        setError(true);
       }
     } catch (error) {
       console.log(error);
@@ -84,6 +84,37 @@ const DiaryEntry = () => {
     } finally {
       setLoading(false);
     }
+
+    const saveDiaryEntryToBackend = async (audioBlob, url) => {
+      const formData = new FormData();
+      formData.append("file", audioBlob);
+      formData.append("url", url);
+      setLoading(true);
+
+      try {
+        const response = await fetch(
+          "https://patprojects-1c802b2b.koyeb.app/api/vocalmemo/upload-diary",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          console.log("Entry saved");
+        } else {
+          setError(true);
+        }
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
   };
 
   return (
@@ -126,15 +157,6 @@ const DiaryEntry = () => {
           animation="border"
           variant="primary"
         />
-      )}
-      {error && (
-        <Alert
-          variant="danger"
-          onClose={() => setError(false)}
-          dismissible
-        >
-          Whoops, something went wrong. Please try again.
-        </Alert>
       )}
     </div>
   );
