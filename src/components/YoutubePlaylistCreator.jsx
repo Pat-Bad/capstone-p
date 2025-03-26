@@ -130,6 +130,34 @@ const YouTubePlaylistCreator = () => {
 
   return (
     <Container className="mt-2 mt-md-3 pt-md-5 pt-lg-5 pt-md-4">
+      {error && (
+        <Alert
+          variant="danger"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
+        >
+          Whoops. Something went wrong!
+        </Alert>
+      )}
+
+      {loading && (
+        <Spinner
+          animation="border"
+          variant="primary"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "9999",
+          }}
+        />
+      )}
       <Row className="mt-3">
         <Col md={6}>
           <h3 className="mb-3">Create a new playlist</h3>
