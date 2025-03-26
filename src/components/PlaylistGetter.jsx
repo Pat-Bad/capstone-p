@@ -463,6 +463,7 @@ const PlaylistGetter = () => {
             dismissible
             onClose={() => setError(false)}
             style={{
+              width: "50%",
               position: "fixed",
               top: "50%",
               left: "50%",
