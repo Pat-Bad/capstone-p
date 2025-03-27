@@ -96,8 +96,14 @@ const PlaylistModifierModal = ({
   //controlla che non ci sia gia il video nella playlist
   //uso some() sull'array per controllare. Torna true se il video esiste, false altrimenti
   const addVideoToPlaylist = (video) => {
-    if (!newVideos.some((v) => v.url === video.url)) {
+    const isNewVideosDuplicate = newVideos.some((v) => v.url === video.url);
+    const isExistingPlaylistDuplicate = playlist.youtubeUrls.some(
+      (url) => url === video.url
+    );
+    if (!isNewVideosDuplicate && !isExistingPlaylistDuplicate) {
       setNewVideos([...newVideos, video]);
+    } else {
+      console.warn("Video già presente nella playlist");
     }
   };
 
