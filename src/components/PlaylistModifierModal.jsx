@@ -327,7 +327,7 @@ const PlaylistModifierModal = ({
                       marginRight: "10px",
                     }}
                   />
-                  <h6>{videoId}</h6>
+                  <h6>{url}</h6>
                   <Form.Check
                     type="checkbox"
                     label="remove"
