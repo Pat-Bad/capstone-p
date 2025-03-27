@@ -279,7 +279,7 @@ const PlaylistModifierModal = ({
         <ListGroup>
           {playlist.youtubeUrls.map((url, index) => {
             const videoId = extractVideoId(url);
-            if (videoId)
+            if (videoId && videoTitles)
               return (
                 <ListGroup.Item key={index}>
                   <div className="d-flex align-items-center">
