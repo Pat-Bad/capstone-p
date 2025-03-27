@@ -275,7 +275,10 @@ const PlaylistModifierModal = ({
                     <h6>{video.title}</h6>
                   </div>
                   <Button
-                    variant="success"
+                    style={{
+                      backgroundColor: "#C465A9",
+                      border: "2px solid #3DB3CF",
+                    }}
                     size="sm"
                     className="ms-2"
                     onClick={() => addVideoToPlaylist(video)}
