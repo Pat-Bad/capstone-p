@@ -279,28 +279,33 @@ const PlaylistModifierModal = ({
         <ListGroup>
           {playlist.youtubeUrls.map((url, index) => {
             const videoId = extractVideoId(url);
-            return (
-              <ListGroup.Item key={index}>
-                <div className="d-flex align-items-center">
-                  <img
-                    src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-                    alt={url}
-                    style={{
-                      width: "80px",
-                      height: "45px",
-                      marginRight: "10px",
-                    }}
-                  />
-                  <h6>{videoTitles[videoId]}</h6>
-                  <Form.Check
-                    type="checkbox"
-                    label="remove"
-                    onChange={() => toggleVideoRemoval(url)}
-                  />
-                </div>
-              </ListGroup.Item>
-            );
+            if (videoId)
+              return (
+                <ListGroup.Item key={index}>
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+                      alt={url}
+                      style={{
+                        width: "80px",
+                        height: "45px",
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h6>{videoTitles[videoId]}</h6>
+                    <Form.Check
+                      type="checkbox"
+                      label="remove"
+                      onChange={() => toggleVideoRemoval(url)}
+                    />
+                  </div>
+                </ListGroup.Item>
+              );
+            else {
+              return null;
+            }
           })}
+          ;
         </ListGroup>
       </Modal.Body>
       <Modal.Footer>
