@@ -112,10 +112,11 @@ const PlaylistModifierModal = ({
 
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
-    setLoading(true);
     for (let videoUrl of videosToRemove) {
+      setLoading(true);
+
       await fetch(
-        `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
+        `hhtps://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
           headers: {
@@ -152,10 +153,10 @@ const PlaylistModifierModal = ({
       );
       setLoading(false);
     }
-    await updatePlaylist();
 
+    updatePlaylist();
     handleClose();
-    setLoading(false);
+    window.location.reload(); // Ricarica la pagina per vedere le modifiche
   };
 
   const extractVideoId = (url) => {
