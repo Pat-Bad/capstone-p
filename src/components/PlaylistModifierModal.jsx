@@ -279,14 +279,14 @@ const PlaylistModifierModal = ({
         {Array.isArray(playlist.youtubeUrls) &&
         playlist.youtubeUrls.length > 0 ? (
           <ListGroup>
-            {playlist.youtubeUrls.map((url, index) => {
-              const videoId = extractVideoId(url);
+            {playlist.youtubeUrls.map((urls, index) => {
+              const videoId = extractVideoId(urls[0]);
               return (
                 <ListGroup.Item key={index}>
                   <div className="d-flex align-items-center">
                     <img
                       src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-                      alt={url}
+                      alt={urls[0]}
                       style={{
                         width: "80px",
                         height: "45px",
@@ -297,7 +297,7 @@ const PlaylistModifierModal = ({
                     <Form.Check
                       type="checkbox"
                       label="remove"
-                      onChange={() => toggleVideoRemoval(url)}
+                      onChange={() => toggleVideoRemoval(urls[0])}
                     />
                   </div>
                 </ListGroup.Item>
