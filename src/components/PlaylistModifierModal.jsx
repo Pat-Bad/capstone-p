@@ -113,8 +113,8 @@ const PlaylistModifierModal = ({
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
     setLoading(true);
-    const removeRequests = Array.from(videosToRemove).map((videoUrl) =>
-      fetch(
+    for (let videoUrl of videosToRemove) {
+      await fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
@@ -128,11 +128,14 @@ const PlaylistModifierModal = ({
             action: "remove",
           }),
         }
-      )
-    );
+      );
+      setLoading(false);
+    }
 
-    const addRequests = newVideos.map((video) =>
-      fetch(
+    for (let video of newVideos) {
+      setLoading(true);
+
+      await fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
@@ -146,22 +149,13 @@ const PlaylistModifierModal = ({
             action: "add",
           }),
         }
-      )
-    );
-
-    try {
-      // Wait for all remove and add requests to complete
-      await Promise.all([...removeRequests, ...addRequests]);
-
-      // After both requests finish, update the playlist
-      await updatePlaylist();
-    } catch (error) {
-      console.error("Error in saving changes", error);
-    } finally {
+      );
       setLoading(false);
-      handleClose();
-      return;
     }
+    await updatePlaylist();
+
+    handleClose();
+    setLoading(false);
   };
 
   const extractVideoId = (url) => {
@@ -276,35 +270,32 @@ const PlaylistModifierModal = ({
 
         {/* Video esistenti nella playlist */}
         <h6 className="mt-4">Already in your playlist 🔥</h6>
-        {Array.isArray(playlist.youtubeUrls) &&
-        playlist.youtubeUrls.length > 0 ? (
-          <ListGroup>
-            {playlist.youtubeUrls.map((urls, index) => {
-              const videoId = extractVideoId(urls[0]);
-              return (
-                <ListGroup.Item key={index}>
-                  <div className="d-flex align-items-center">
-                    <img
-                      src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-                      alt={urls[0]}
-                      style={{
-                        width: "80px",
-                        height: "45px",
-                        marginRight: "10px",
-                      }}
-                    />
-                    <h6>{videoTitles[videoId]}</h6>
-                    <Form.Check
-                      type="checkbox"
-                      label="remove"
-                      onChange={() => toggleVideoRemoval(urls[0])}
-                    />
-                  </div>
-                </ListGroup.Item>
-              );
-            })}
-          </ListGroup>
-        ) : null}
+        <ListGroup>
+          {playlist.youtubeUrls.map((url, index) => {
+            const videoId = extractVideoId(url);
+            return (
+              <ListGroup.Item key={index}>
+                <div className="d-flex align-items-center">
+                  <img
+                    src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+                    alt={url}
+                    style={{
+                      width: "80px",
+                      height: "45px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  <h6>{videoTitles[videoId]}</h6>
+                  <Form.Check
+                    type="checkbox"
+                    label="remove"
+                    onChange={() => toggleVideoRemoval(url)}
+                  />
+                </div>
+              </ListGroup.Item>
+            );
+          })}
+        </ListGroup>
       </Modal.Body>
       <Modal.Footer>
         <Button
