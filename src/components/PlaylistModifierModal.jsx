@@ -232,6 +232,7 @@ const PlaylistModifierModal = ({
             dismissible
             onClose={() => setError(false)}
             style={{
+              textAlign: "center",
               position: "fixed",
               top: "50%",
               left: "50%",

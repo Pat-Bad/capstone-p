@@ -468,6 +468,7 @@ const PlaylistGetter = () => {
               position: "fixed",
               top: "50%",
               left: "50%",
+              textAlign: "center",
               transform: "translate(-50%, -50%)",
               zIndex: "9999",
             }}
