@@ -114,10 +114,9 @@ const PlaylistModifierModal = ({
   const saveChanges = async () => {
     setLoading(true);
     try {
+      // Rimuovi i video selezionati
       for (let videoUrl of videosToRemove) {
-        setLoading(true);
-
-        await fetch(
+        const response = await fetch(
           `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
           {
             method: "PATCH",
@@ -132,10 +131,16 @@ const PlaylistModifierModal = ({
             }),
           }
         );
+
+        if (!response.ok) {
+          console.error("Error removing video", await response.json());
+          return;
+        }
       }
 
+      // Aggiungi i nuovi video
       for (let video of newVideos) {
-        await fetch(
+        const response = await fetch(
           `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
           {
             method: "PATCH",
@@ -150,10 +155,16 @@ const PlaylistModifierModal = ({
             }),
           }
         );
+
+        if (!response.ok) {
+          console.error("Error adding video", await response.json());
+          return;
+        }
       }
 
+      // Dopo aver salvato i cambiamenti, aggiorna la playlist
       updatePlaylist();
-      handleClose();
+      handleClose(); // Chiude il modal solo dopo aver completato l'aggiornamento
     } catch (error) {
       console.error("Error in saving changes", error);
     } finally {
@@ -175,7 +186,7 @@ const PlaylistModifierModal = ({
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title>Modifica Playlist</Modal.Title>
+        <Modal.Title>Modify Playlist</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Control
