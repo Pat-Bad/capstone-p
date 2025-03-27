@@ -118,7 +118,7 @@ const PlaylistModifierModal = ({
         setLoading(true);
 
         await fetch(
-          `hhtps://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
+          `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
           {
             method: "PATCH",
             headers: {
