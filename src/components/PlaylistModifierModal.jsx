@@ -150,7 +150,10 @@ const PlaylistModifierModal = ({
     );
 
     try {
+      // Wait for all remove and add requests to complete
       await Promise.all([...removeRequests, ...addRequests]);
+
+      // After both requests finish, update the playlist
       await updatePlaylist();
     } catch (error) {
       console.error("Error in saving changes", error);
