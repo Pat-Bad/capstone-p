@@ -114,6 +114,7 @@ const PlaylistModifierModal = ({
   const saveChanges = async () => {
     setLoading(true);
     try {
+      console.log("Initial playlist:", playlist);
       // Rimuovi i video selezionati
       for (let videoUrl of videosToRemove) {
         const response = await fetch(
@@ -131,6 +132,8 @@ const PlaylistModifierModal = ({
             }),
           }
         );
+        const responseData = await response.json();
+        console.log("Remove video response:", responseData);
 
         if (!response.ok) {
           console.error("Error removing video", await response.json());
@@ -155,23 +158,38 @@ const PlaylistModifierModal = ({
             }),
           }
         );
-
+        const responseData = await response.json();
+        console.log("Add video response:", responseData);
         if (!response.ok) {
           console.error("Error adding video", await response.json());
           return;
         }
       }
+      const playlistResponse = await fetch(
+        `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Dopo aver salvato i cambiamenti, aggiorna la playlist
-      updatePlaylist();
-      handleClose(); // Chiude il modal solo dopo aver completato l'aggiornamento
+      const updatedPlaylist = await playlistResponse.json();
+      console.log("Fetched updated playlist:", updatedPlaylist);
+
+      if (updatedPlaylist && updatedPlaylist.id) {
+        updatePlaylist(updatedPlaylist);
+      } else {
+        console.error("Updated playlist is invalid:", updatedPlaylist);
+      }
+
+      handleClose();
     } catch (error) {
       console.error("Error in saving changes", error);
     } finally {
       setLoading(false);
     }
   };
-
   const extractVideoId = (url) => {
     const match = url.match(
       /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i
@@ -233,54 +251,57 @@ const PlaylistModifierModal = ({
         )}
 
         <ListGroup className="mt-3">
-          {searchResults.map((video) => (
-            <ListGroup.Item key={video.id}>
-              <div className="d-flex align-items-center">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  style={{ width: "80px", height: "45px", marginRight: "10px" }}
-                />
-                <div>
-                  <h6>{video.title}</h6>
+          {searchResults &&
+            searchResults.map((video) => (
+              <ListGroup.Item key={video.id}>
+                <div className="d-flex align-items-center">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    style={{
+                      width: "80px",
+                      height: "45px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  <div>
+                    <h6>{video.title}</h6>
+                  </div>
+                  <Button
+                    variant="success"
+                    size="sm"
+                    className="ms-2"
+                    onClick={() => addVideoToPlaylist(video)}
+                  >
+                    Add
+                  </Button>
                 </div>
-                <Button
-                  variant="success"
-                  size="sm"
-                  className="ms-2"
-                  onClick={() => addVideoToPlaylist(video)}
-                >
-                  Add
-                </Button>
-              </div>
-            </ListGroup.Item>
-          ))}
+              </ListGroup.Item>
+            ))}
         </ListGroup>
 
         {/* Video da aggiungere, mostro solo se ne è selezionato almeno 1 */}
-        {newVideos.length > 0 && (
-          <>
-            <h6 className="mt-4">Video da aggiungere</h6>
-            <ListGroup>
-              {newVideos.map((video, index) => (
-                <ListGroup.Item key={index}>
-                  <div className="d-flex align-items-center">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      style={{
-                        width: "80px",
-                        height: "45px",
-                        marginRight: "10px",
-                      }}
-                    />
-                    <h6>{video.title}</h6>
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </>
-        )}
+
+        <h6 className="mt-4">Music to add</h6>
+        <ListGroup>
+          {newVideos.length > 0 &&
+            newVideos.map((video, index) => (
+              <ListGroup.Item key={index}>
+                <div className="d-flex align-items-center">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    style={{
+                      width: "80px",
+                      height: "45px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  <h6>{video.title}</h6>
+                </div>
+              </ListGroup.Item>
+            ))}
+        </ListGroup>
 
         {/* Video esistenti nella playlist */}
         <h6 className="mt-4">Already in your playlist 🔥</h6>
