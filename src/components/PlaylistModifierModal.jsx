@@ -330,6 +330,7 @@ const PlaylistModifierModal = ({
                   />
                   <h6>{videoSnippet}</h6>
                   <Form.Check
+                    className="ps-2"
                     type="checkbox"
                     label="remove"
                     onChange={() => toggleVideoRemoval(url)}
