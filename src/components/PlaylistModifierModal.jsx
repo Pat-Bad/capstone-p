@@ -174,18 +174,18 @@ const PlaylistModifierModal = ({
         }
       );
 
-      const updatedPlaylist = await playlistResponse.json();
-      console.log("Fetched updated playlist:", updatedPlaylist);
-
-      if (updatedPlaylist && updatedPlaylist.id) {
-        updatePlaylist(updatedPlaylist);
-      } else {
-        console.error("Updated playlist is invalid:", updatedPlaylist);
-      }
+      updatePlaylist({
+        ...playlist,
+        youtubeUrls: [
+          ...playlist.youtubeUrls.filter((url) => !videosToRemove.has(url)),
+          ...newVideos.map((video) => video.url),
+        ],
+      });
 
       handleClose();
     } catch (error) {
       console.error("Error in saving changes", error);
+      // Optionally show an error message to the user
     } finally {
       setLoading(false);
     }
