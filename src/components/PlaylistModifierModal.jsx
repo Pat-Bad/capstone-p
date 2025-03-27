@@ -53,10 +53,10 @@ const PlaylistModifierModal = ({
         });
         setVideoTitles(titlesMap);
       } else {
-        console.error("Errore nel recupero dei titoli dei video", data);
+        console.error("Error in fetching video titles", data);
       }
     } catch (error) {
-      console.error("Errore nella chiamata all'API di YouTube", error);
+      console.error("Error in fetching video titles", error);
     }
   };
 
@@ -103,7 +103,7 @@ const PlaylistModifierModal = ({
     if (!isNewVideosDuplicate && !isExistingPlaylistDuplicate) {
       setNewVideos([...newVideos, video]);
     } else {
-      console.warn("Video già presente nella playlist");
+      console.warn("Video already exists in playlist");
     }
   };
 
@@ -121,7 +121,8 @@ const PlaylistModifierModal = ({
     setLoading(true);
     try {
       console.log("Initial playlist:", playlist);
-      // Rimuovi i video selezionati
+
+      //RIMOZIONE VIDEO
       for (let videoUrl of videosToRemove) {
         const response = await fetch(
           `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
@@ -147,7 +148,7 @@ const PlaylistModifierModal = ({
         }
       }
 
-      // Aggiungi i nuovi video
+      //AGGIUNTA VIDEO
       for (let video of newVideos) {
         const response = await fetch(
           `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
@@ -191,7 +192,7 @@ const PlaylistModifierModal = ({
       handleClose();
     } catch (error) {
       console.error("Error in saving changes", error);
-      // Optionally show an error message to the user
+      setError(true);
     } finally {
       setLoading(false);
     }

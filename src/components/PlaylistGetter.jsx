@@ -208,7 +208,7 @@ const PlaylistGetter = () => {
       );
 
       if (response.ok) {
-        // Rimuovi la playlist dalla lista
+        // Rimuovo la playlist dalla lista
         setPlaylists((prevPlaylists) =>
           prevPlaylists.filter((playlist) => playlist.id !== playlistToDelete)
         );

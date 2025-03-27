@@ -57,7 +57,7 @@ const YouTubePlaylistCreator = () => {
           mediaRecorderRef.current.start();
         })
         .catch((err) => {
-          console.error("Errore nell'accesso al microfono:", err);
+          console.error("Error accessing user media", err);
         });
     } else if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();

@@ -7,7 +7,9 @@ const MyFooter = () => {
       <Container>
         <Row>
           <Col className="text-center py-2">
-            <p className="m-0">This is my Capstone Project. © {currentYear}</p>
+            <p className="m-0">
+              This is Patricia's Capstone Project. © {currentYear}
+            </p>
           </Col>
         </Row>
       </Container>
