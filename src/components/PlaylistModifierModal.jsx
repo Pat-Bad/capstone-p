@@ -112,51 +112,53 @@ const PlaylistModifierModal = ({
 
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
-    for (let videoUrl of videosToRemove) {
-      setLoading(true);
+    setLoading(true);
+    try {
+      for (let videoUrl of videosToRemove) {
+        setLoading(true);
 
-      await fetch(
-        `hhtps://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            playlistId: playlist.id,
-            youtubeUrl: videoUrl,
-            action: "remove",
-          }),
-        }
-      );
+        await fetch(
+          `hhtps://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              playlistId: playlist.id,
+              youtubeUrl: videoUrl,
+              action: "remove",
+            }),
+          }
+        );
+      }
+
+      for (let video of newVideos) {
+        await fetch(
+          `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              playlistId: playlist.id,
+              youtubeUrl: video.url,
+              action: "add",
+            }),
+          }
+        );
+      }
+
+      updatePlaylist();
+      handleClose();
+    } catch (error) {
+      console.error("Error in saving changes", error);
+    } finally {
       setLoading(false);
     }
-
-    for (let video of newVideos) {
-      setLoading(true);
-
-      await fetch(
-        `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            playlistId: playlist.id,
-            youtubeUrl: video.url,
-            action: "add",
-          }),
-        }
-      );
-      setLoading(false);
-    }
-
-    updatePlaylist();
-    handleClose();
-    window.location.reload(); // Ricarica la pagina per vedere le modifiche
   };
 
   const extractVideoId = (url) => {
@@ -286,7 +288,7 @@ const PlaylistModifierModal = ({
                       marginRight: "10px",
                     }}
                   />
-                  <h6>{videoTitles[videoId]}</h6>
+                  <h6>{[videoId]}</h6>
                   <Form.Check
                     type="checkbox"
                     label="remove"
