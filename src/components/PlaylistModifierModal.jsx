@@ -276,10 +276,11 @@ const PlaylistModifierModal = ({
 
         {/* Video esistenti nella playlist */}
         <h6 className="mt-4">Already in your playlist 🔥</h6>
-        <ListGroup>
-          {playlist.youtubeUrls.map((url, index) => {
-            const videoId = extractVideoId(url);
-            if (videoId !== null && videoTitles)
+        {Array.isArray(playlist.youtubeUrls) &&
+        playlist.youtubeUrls.length > 0 ? (
+          <ListGroup>
+            {playlist.youtubeUrls.map((url, index) => {
+              const videoId = extractVideoId(url);
               return (
                 <ListGroup.Item key={index}>
                   <div className="d-flex align-items-center">
@@ -301,12 +302,9 @@ const PlaylistModifierModal = ({
                   </div>
                 </ListGroup.Item>
               );
-            else {
-              return null;
-            }
-          })}
-          ;
-        </ListGroup>
+            })}
+          </ListGroup>
+        ) : null}
       </Modal.Body>
       <Modal.Footer>
         <Button
