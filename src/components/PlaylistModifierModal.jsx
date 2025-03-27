@@ -315,6 +315,7 @@ const PlaylistModifierModal = ({
         <ListGroup>
           {playlist.youtubeUrls.map((url, index) => {
             const videoId = extractVideoId(url);
+            const videoSnippet = videoTitles[videoId];
             return (
               <ListGroup.Item key={index}>
                 <div className="d-flex align-items-center">
@@ -327,7 +328,7 @@ const PlaylistModifierModal = ({
                       marginRight: "10px",
                     }}
                   />
-                  <h6>{url}</h6>
+                  <h6>{videoSnippet}</h6>
                   <Form.Check
                     type="checkbox"
                     label="remove"
