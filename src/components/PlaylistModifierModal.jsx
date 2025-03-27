@@ -113,7 +113,7 @@ const PlaylistModifierModal = ({
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
     setLoading(true);
-    const removeRequests = [...videosToRemove].map((videoUrl) =>
+    const removeRequests = Array.from(videosToRemove).map((videoUrl) =>
       fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
@@ -160,6 +160,7 @@ const PlaylistModifierModal = ({
     } finally {
       setLoading(false);
       handleClose();
+      return;
     }
   };
 
