@@ -58,6 +58,7 @@ const Manager = () => {
             top: "50%",
             left: "50%",
             width: "50%",
+            transform: "translate(-50%, -50%)",
             zIndex: "9999",
           }}
         >
