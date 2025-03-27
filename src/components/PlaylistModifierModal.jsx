@@ -153,10 +153,10 @@ const PlaylistModifierModal = ({
       );
       setLoading(false);
     }
-
+    await new Promise((resolve) => setTimeout(resolve, 500));
     updatePlaylist();
     handleClose();
-    window.location.reload(); // Ricarica la pagina per vedere le modifiche
+    setLoading(false);
   };
 
   const extractVideoId = (url) => {
