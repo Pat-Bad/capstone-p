@@ -112,10 +112,9 @@ const PlaylistModifierModal = ({
 
   // Salva le modifiche (aggiunta/rimozione video)
   const saveChanges = async () => {
-    for (let videoUrl of videosToRemove) {
-      setLoading(true);
-
-      await fetch(
+    setLoading(true);
+    const removeRequests = [...videosToRemove].map((videoUrl) =>
+      fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
@@ -129,14 +128,11 @@ const PlaylistModifierModal = ({
             action: "remove",
           }),
         }
-      );
-      setLoading(false);
-    }
+      )
+    );
 
-    for (let video of newVideos) {
-      setLoading(true);
-
-      await fetch(
+    const addRequests = newVideos.map((video) =>
+      fetch(
         `https://patprojects-1c802b2b.koyeb.app/api/playlist/${playlist.id}/modify-video`,
         {
           method: "PATCH",
@@ -150,13 +146,18 @@ const PlaylistModifierModal = ({
             action: "add",
           }),
         }
-      );
+      )
+    );
+
+    try {
+      await Promise.all([...removeRequests, ...addRequests]);
+      await updatePlaylist();
+    } catch (error) {
+      console.error("Error in saving changes", error);
+    } finally {
       setLoading(false);
+      handleClose();
     }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    updatePlaylist();
-    handleClose();
-    setLoading(false);
   };
 
   const extractVideoId = (url) => {
